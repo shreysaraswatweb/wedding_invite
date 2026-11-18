@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type RefObject } from "react";
+import { useCallback, useRef, useState, type CSSProperties, type RefObject } from "react";
 import { invitation } from "../../config/invitation";
 import { haptic } from "../../utils/haptic";
 import { useSceneScroll } from "../../animations/useSceneScroll";
@@ -7,26 +7,8 @@ import { OrnamentDivider } from "../OrnamentDivider/OrnamentDivider";
 import { ScratchCard } from "../ScratchCard/ScratchCard";
 import { SeamlessVideoBackground } from "./SeamlessVideoBackground";
 import countdownVideo from "../../assests/videos/gemini_generated_video_15ad4f22.mp4";
-import pavilionVideo from "../../assests/videos/gemini_generated_video_710ea71f.mp4";
+import video1 from "../../assests/wedding_invite_assests/1.mp4";
 import "./CinematicSequence.css";
-
-/**
- * Petals for the couple's reveal: a fixed, hand-balanced spread (no randomness at
- * render time), fanning up and out from behind the couple, in rose and gold.
- */
-const PETALS = Array.from({ length: 28 }, (_, i) => {
-  const t = i / 27;
-  const angle = -170 + t * 160 + (i % 3) * 5; // degrees: a wide upward fan
-  const distance = 34 + ((i * 37) % 30); // % of the portrait's width
-  return {
-    angle,
-    distance,
-    size: 9 + ((i * 5) % 8),
-    tint: i % 4 === 0 ? "gold" : i % 3 === 0 ? "blush" : "rose",
-    spin: (i % 2 ? 1 : -1) * (120 + ((i * 53) % 160)),
-  };
-});
-
 
 function CopyableDates({ label, dateTime }: { label: string; dateTime: string }) {
   const [copied, setCopied] = useState(false);
@@ -58,7 +40,7 @@ function CopyableDates({ label, dateTime }: { label: string; dateTime: string })
 
 type CinematicSequenceProps = {
   active: boolean;
-  /** The envelope has cleared, so the title scene is the screen in front of the guest. */
+  /** The stage is active and ready in front of the guest. */
   settled: boolean;
   reducedMotion: boolean;
   /** The fixed stage this scene is a layer of. */
@@ -72,7 +54,9 @@ export function CinematicSequence({
   stage,
 }: CinematicSequenceProps) {
   const rootRef = useRef<HTMLElement>(null);
-  const [sceneOne, sceneTwo, ...later] = invitation.scenes;
+  const [videoRendered, setVideoRendered] = useState(false);
+  const [videoCompleted, setVideoCompleted] = useState(false);
+  const [, sceneTwo, ...later] = invitation.scenes;
   const { wedding } = invitation;
   const framed = Boolean(sceneTwo.artAspect);
   // "Countdown to Forever" → main word, a small linking word ("to"), and the rest.
@@ -81,12 +65,22 @@ export function CinematicSequence({
   const headingRest = (headingLink ? headingWords.slice(1) : headingWords).join(" ");
   const frameStyle = { "--art-aspect": sceneTwo.artAspect ?? 1 } as CSSProperties;
 
+  const handleVideoRendered = useCallback(() => {
+    setVideoRendered(true);
+  }, []);
+
+  const handleVideoCompleted = useCallback(() => {
+    setVideoCompleted(true);
+  }, []);
+
   useSceneScroll({
     root: rootRef,
     stage,
     enabled: active,
     settled,
     reducedMotion,
+    videoRendered,
+    videoCompleted,
   });
 
   return (
@@ -99,12 +93,15 @@ export function CinematicSequence({
       inert={!active}
     >
       <div className="cinema__viewport">
-        {/* Pages 1 & 2 (The P&L Wedding & Bride & Groom): Seamless looping video background */}
+        {/* Page 1 (Lakshay & Prerna - Are Getting Married): 19s forward -> 16s<->19s Boomerang loop */}
         <div className="scene-bg scene-bg--one">
           <SeamlessVideoBackground
-            src={pavilionVideo}
+            src={video1}
             active={active}
-            crossfadeDuration={1.4}
+            boomerangStart={16.9}
+            boomerangEnd={19.0}
+            onInitialComplete={handleVideoCompleted}
+            onVideoRendered={handleVideoRendered}
           />
         </div>
         {/* Scene 2 (Countdown & Scratch): Seamless looping video background */}
@@ -115,100 +112,64 @@ export function CinematicSequence({
             crossfadeDuration={1.4}
           />
         </div>
-        <div className="cinema__veil" />
 
         {/* All of this scene's text: faded out by the stage as the next scene arrives. */}
         <div className="cinema__copy" data-stage-copy>
-        <div className="scene-copy scene-copy--one">
-          <h1 className={`scene-title ${sceneOne.titleImage ? "scene-title--lettering" : ""}`.trim()}>
-            {sceneOne.titleImage ? (
-              <img className="scene-lettering" src={sceneOne.titleImage} alt={sceneOne.title} />
-            ) : (
-              sceneOne.title
-            )}
-          </h1>
-          {sceneOne.supportingText ? (
-            <p className="scene-support">{sceneOne.supportingText}</p>
-          ) : null}
-        </div>
-
-        {/* Names & couple: same pavilion background as the title; the couple's photo appears only here. */}
-        <div className="scene-names" aria-labelledby="scene-names-title">
-          <div className="scene-names__portrait">
-            <div className="scene-names__arch" aria-hidden="true" />
+          {/* Top-Center Hero: Logo Reveal, Bride & Groom Names, "Are Getting Married" */}
+          <div className="scene-hero" aria-labelledby="scene-hero-title">
             <img
-              className="scene-names__couple"
-              src={invitation.couplePhoto}
-              alt={`${invitation.coupleNames.first} and ${invitation.coupleNames.second}`}
+              className="scene-logo"
+              src={invitation.logo}
+              alt="LP monogram"
             />
-            <div className="scene-names__petals" aria-hidden="true">
-              {PETALS.map((petal, index) => (
-                <span
-                  key={index}
-                  className={`scene-names__petal scene-names__petal--${petal.tint}`}
-                  data-angle={petal.angle}
-                  data-distance={petal.distance}
-                  data-spin={petal.spin}
-                  style={{ width: petal.size, height: petal.size * 1.35 }}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="scene-names__text">
-            <h2 id="scene-names-title" className="scene-names__title">
-            <img
-            className="scene-logo"
-            src={invitation.logo}
-            alt="LP monogram"
-          /> 
+            <h1 id="scene-hero-title" className="scene-names__title">
               <span className="scene-names__name">{invitation.coupleNames.first}</span>
               <span className="scene-names__amp">&amp;</span>
               <span className="scene-names__name">{invitation.coupleNames.second}</span>
-            </h2>
-            <p className="scene-names__line">{invitation.coupleNames.invitationLine}</p>
+            </h1>
+            <p className="scene-hero__married">{invitation.coupleNames.invitationLine}</p>
           </div>
-        </div>
 
-        <div
-          className={`scene-copy scene-copy--two ${framed ? "scene-copy--framed" : ""}`.trim()}
-          style={framed ? frameStyle : undefined}
-        >
-          <div className="scene-two__inner">
-            {/* Above the centre: invitation line and the scratch-to-reveal dates. */}
-            <div className="scene-two__lead">
-              {sceneTwo.kicker ? <p className="scene-kicker">{sceneTwo.kicker}</p> : null}
-              {/* Typographic lockup: "COUNTDOWN" in spaced capitals over an italic "to Forever". */}
-              <h2 className="scene-title scene-title--second scene-two__heading">
-                <span className="scene-two__heading-main">{headingMain}</span>{" "}
-                <span className="scene-two__heading-tail">
-                  {headingLink ? <span className="scene-two__heading-link">{headingLink}</span> : null}
-                  {headingLink ? " " : null}
-                  {headingRest}
-                </span>
-              </h2>
-              {sceneTwo.supportingText ? <p className="scene-support">{sceneTwo.supportingText}</p> : null}
-              <OrnamentDivider className="scene-two__divider" />
-              <ScratchCard
-                className="scene-two__scratch"
-                prompt={wedding.scratchLabel}
-                revealLabel={`${wedding.scratchLabel}: reveal the wedding dates`}
-                announcement={`The wedding is on ${wedding.datesLabel}.`}
-                reducedMotion={reducedMotion}
-              >
-                <CopyableDates label={wedding.datesLabel} dateTime={wedding.startsAt} />
-              </ScratchCard>
-            </div>
-            {/* The centre of the screen: the countdown, highlighted. */}
-            <div className="scene-two__countdown-panel">
-              <Countdown
-                className="scene-two__countdown"
-                target={wedding.startsAt}
-                completeMessage={wedding.celebrationMessage}
-                reducedMotion={reducedMotion}
-              />
+          <div
+            className={`scene-copy scene-copy--two ${framed ? "scene-copy--framed" : ""}`.trim()}
+            style={framed ? frameStyle : undefined}
+          >
+            <div className="scene-two__inner">
+              {/* Above the centre: invitation line and the scratch-to-reveal dates. */}
+              <div className="scene-two__lead">
+                {sceneTwo.kicker ? <p className="scene-kicker">{sceneTwo.kicker}</p> : null}
+                {/* Typographic lockup: "COUNTDOWN" in spaced capitals over an italic "to Forever". */}
+                <h2 className="scene-title scene-title--second scene-two__heading">
+                  <span className="scene-two__heading-main">{headingMain}</span>{" "}
+                  <span className="scene-two__heading-tail">
+                    {headingLink ? <span className="scene-two__heading-link">{headingLink}</span> : null}
+                    {headingLink ? " " : null}
+                    {headingRest}
+                  </span>
+                </h2>
+                {sceneTwo.supportingText ? <p className="scene-support">{sceneTwo.supportingText}</p> : null}
+                <OrnamentDivider className="scene-two__divider" />
+                <ScratchCard
+                  className="scene-two__scratch"
+                  prompt={wedding.scratchLabel}
+                  revealLabel={`${wedding.scratchLabel}: reveal the wedding dates`}
+                  announcement={`The wedding is on ${wedding.datesLabel}.`}
+                  reducedMotion={reducedMotion}
+                >
+                  <CopyableDates label={wedding.datesLabel} dateTime={wedding.startsAt} />
+                </ScratchCard>
+              </div>
+              {/* The centre of the screen: the countdown, highlighted. */}
+              <div className="scene-two__countdown-panel">
+                <Countdown
+                  className="scene-two__countdown"
+                  target={wedding.startsAt}
+                  completeMessage={wedding.celebrationMessage}
+                  reducedMotion={reducedMotion}
+                />
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
 

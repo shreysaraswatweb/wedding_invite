@@ -5,7 +5,7 @@
   height: 100%;
   overflow: hidden;
   pointer-events: none;
-  background: transparent;
+  background: #141013;
 }
 
 .seamless-video__media {
@@ -16,9 +16,23 @@
   object-fit: cover;
   object-position: center;
   pointer-events: none;
-  will-change: opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  opacity: 0;
+  /* Corrects Chromium's limited-range (16-235) washed-out gamma, matching VLC's deep blacks, rich contrast, and vibrancy */
+  filter: contrast(1.16) saturate(1.12) brightness(0.97);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+}
+
+.seamless-video__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  filter: contrast(1.16) saturate(1.12) brightness(0.97);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  display: none;
+  z-index: 2;
 }

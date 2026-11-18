@@ -1,4 +1,4 @@
-import { useLayoutEffect, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
 import gsap from "gsap";
 import { onArrival } from "../stage/arrival";
 
@@ -6,130 +6,113 @@ type Args = {
   root: RefObject<HTMLElement | null>;
   stage: RefObject<HTMLElement | null>;
   enabled: boolean;
-  /** The envelope has cleared, so the title image is the picture in front of the guest. */
   settled: boolean;
   reducedMotion: boolean;
+  videoRendered?: boolean;
+  videoCompleted?: boolean;
 };
 
 /**
  * Scene animation controller for the cinematic sequence.
- * The Bride & Groom portrait, arch, names, and petal burst are featured
- * as the opening hero chapter.
+ * Features the Opening Hero Page over Video 1:
+ * Choreographed one-by-one fade in transition:
+ * 1. Logo floats down and fades in
+ * 2. Groom's name ("Lakshay") unblurs with letter-spacing collapse
+ * 3. Gilded "&" bounces in
+ * 4. Bride's name ("Prerna") unblurs with letter-spacing collapse
+ * 5. Wedding line ("Are Getting Married") floats up and fades in
  */
-export function useSceneScroll({ root, enabled, settled, reducedMotion }: Args) {
+export function useSceneScroll({
+  root,
+  enabled,
+  reducedMotion,
+  videoCompleted = false,
+}: Args) {
+  const namesRevealRef = useRef<gsap.core.Timeline | null>(null);
+
   useLayoutEffect(() => {
     if (!enabled || !root.current) return;
 
     const ctx = gsap.context(() => {
-      const names = root.current!.querySelector<HTMLElement>(".scene-names");
-      const bgTwo = root.current!.querySelector(".scene-bg--two");
-      const titleOne = root.current!.querySelector(".scene-copy--one");
-      const copyTwo = root.current!.querySelector(".scene-copy--two");
-      const bgOne = root.current!.querySelector(".scene-bg--one");
+      const hero = root.current!.querySelector<HTMLElement>(".scene-hero");
+      const bgOne = root.current!.querySelector<HTMLElement>(".scene-bg--one");
+      const bgTwo = root.current!.querySelector<HTMLElement>(".scene-bg--two");
+      const copyTwo = root.current!.querySelector<HTMLElement>(".scene-copy--two");
 
-      if (!names || !bgTwo || !titleOne || !copyTwo || !bgOne) return;
+      if (!hero || !bgOne || !bgTwo || !copyTwo) return;
 
-      // Initial state: Step 0 ("The P&L Wedding" title screen)
-      gsap.set(bgOne, { opacity: 1, scale: 1 });
+      const logo = hero.querySelector<HTMLElement>(".scene-logo");
+      const nameEls = hero.querySelectorAll<HTMLElement>(".scene-names__name");
+      const amp = hero.querySelector<HTMLElement>(".scene-names__amp");
+      const marriedText = hero.querySelector<HTMLElement>(".scene-hero__married");
+
+      // Initial state: Step 0 (Hero page with Video 1 active, Countdown hidden)
+      gsap.set(bgOne, { opacity: 1 });
       gsap.set(bgTwo, { opacity: 0 });
-      gsap.set(titleOne, { opacity: 1, pointerEvents: "auto" });
       gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
-      gsap.set(names, { opacity: 0, pointerEvents: "none" });
+      gsap.set(hero, { opacity: 1, pointerEvents: "auto" });
 
-      const nameEls = names.querySelectorAll(".scene-names__name");
-      const coupleImg = names.querySelector(".scene-names__couple");
-      const arch = names.querySelector(".scene-names__arch");
-      const line = names.querySelector(".scene-names__line");
-      const amp = names.querySelector(".scene-names__amp");
-      const logo = names.querySelector(".scene-logo");
-      const portrait = names.querySelector<HTMLElement>(".scene-names__portrait");
-      const petals = gsap.utils.toArray<HTMLElement>(names.querySelectorAll(".scene-names__petal"));
-      const lettering = titleOne.querySelector(".scene-lettering");
+      // Elements to be revealed: start completely hidden
+      if (logo) gsap.set(logo, { opacity: 0, y: -14, scale: 0.88 });
+      if (nameEls && nameEls[0]) gsap.set(nameEls[0], { opacity: 0, y: 12 });
+      if (amp) gsap.set(amp, { opacity: 0, y: 10, scale: 0.8 });
+      if (nameEls && nameEls[1]) gsap.set(nameEls[1], { opacity: 0, y: 12 });
+      if (marriedText) gsap.set(marriedText, { opacity: 0, y: 14 });
 
-      // Names & couple: the classic joyful reveal from the earliest design.
-      // Arch glows in → couple is unveiled from feet up as they settle from slight zoom →
-      // LP monogram floats in → "Lakshay" letter spacing & blur clearing → gold "&" bounce →
-      // "Prerna" letter spacing & blur clearing → petal burst fans out & drifts down → invitation line.
-      const namesReveal = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
+      // Distinct 3-Stage Reveal Timeline:
+      // Stage 1: Logo revealed all by itself, then settles.
+      // Stage 2: Names & gilded '&' revealed ("Lakshay & Prerna"), then settle.
+      // Stage 3: Invitation line revealed together.
+      const namesReveal = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+      namesRevealRef.current = namesReveal;
 
       if (!reducedMotion) {
         namesReveal
-          .fromTo(
-            arch,
-            { opacity: 0, scale: 0.92, transformOrigin: "50% 100%" },
-            { opacity: 1, scale: 1, duration: 0.55 },
-            0,
-          )
-          .fromTo(
-            coupleImg,
-            { opacity: 0, scale: 1.08, clipPath: "inset(100% 0% 0% 0%)" },
-            { opacity: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.85, ease: "power3.out" },
-            0.08,
-          )
+          // --- STAGE 1: Logo reveals separately ---
           .fromTo(
             logo,
-            { opacity: 0, scale: 0.85, y: -8 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "power2.out" },
-            0.18,
+            { opacity: 0, scale: 0.88, y: -14 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: "power2.out" },
+            0,
           )
+          // --- STAGE 2: Once logo is revealed, Names and '&' reveal ---
           .fromTo(
             nameEls[0],
-            { opacity: 0, letterSpacing: "0.34em", filter: "blur(4px)" },
-            { opacity: 1, letterSpacing: "0.04em", filter: "blur(0px)", duration: 0.7, ease: "power3.out" },
-            0.28,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" },
+            "+=0.35",
           )
           .fromTo(
             amp,
-            { opacity: 0, scale: 0.3, rotation: -18 },
-            { opacity: 1, scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2.2)" },
-            0.48,
+            { opacity: 0, y: 10, scale: 0.75 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.8)" },
+            "-=0.35",
           )
           .fromTo(
             nameEls[1],
-            { opacity: 0, letterSpacing: "0.34em", filter: "blur(4px)" },
-            { opacity: 1, letterSpacing: "0.04em", filter: "blur(0px)", duration: 0.7, ease: "power3.out" },
-            0.58,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" },
+            "-=0.35",
           )
-          .fromTo(line, { opacity: 0 }, { opacity: 1, duration: 0.45 }, 0.85)
-          .set(nameEls, { clearProps: "filter" })
-          .set(coupleImg, { clearProps: "clipPath" });
-
-        // Petal burst: fanning out around the couple and drifting down with gravity
-        namesReveal.add(() => {
-          const width = portrait?.getBoundingClientRect().width || 300;
-          gsap.killTweensOf(petals);
-          gsap.set(petals, { opacity: 0, x: 0, y: 0, scale: 0.3 });
-          petals.forEach((petal, i) => {
-            const angle = (Number(petal.dataset.angle) * Math.PI) / 180;
-            const distance = (Number(petal.dataset.distance) / 100) * width;
-            const dx = Math.cos(angle) * distance;
-            const dy = Math.sin(angle) * distance;
-            const spin = Number(petal.dataset.spin);
-            gsap
-              .timeline({ delay: (i % 7) * 0.035 })
-              .to(petal, { x: dx, y: dy, opacity: 1, scale: 1, rotation: spin * 0.5, duration: 0.75, ease: "power2.out" })
-              .to(petal, {
-                x: dx * 1.15,
-                y: dy + width * 0.38,
-                rotation: spin,
-                opacity: 0,
-                duration: 1.9,
-                ease: "sine.in",
-              });
-          });
-        }, 0.4);
+          // --- STAGE 3: Once names are revealed, Invitation line reveals together ---
+          .fromTo(
+            marriedText,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.85, ease: "power2.out" },
+            "+=0.4",
+          )
+          .set([logo, nameEls[0], amp, nameEls[1], marriedText].filter(Boolean), { clearProps: "transform,filter" });
       } else {
-        namesReveal.to([arch, coupleImg, logo, amp, line, ...nameEls], { opacity: 1, duration: 0.3 });
+        namesReveal
+          .to(logo, { opacity: 1, duration: 0.45 })
+          .to([nameEls[0], amp, nameEls[1]].filter(Boolean), { opacity: 1, duration: 0.45 }, "+=0.3")
+          .to(marriedText, { opacity: 1, duration: 0.45 }, "+=0.3");
       }
 
-      // Initial state: ready to reveal
-      namesReveal.pause(0);
-      gsap.set(petals, { opacity: 0, x: 0, y: 0, scale: 0.3 });
-
-      // Held back until the envelope has cleared, then revealed by the entrance below.
-      if (lettering) gsap.set(lettering, { opacity: 0 });
-
-      // Ensure all elements inside copyTwo (Countdown, Scratch Card, Heading) are clean, crisp, and visible
+      // Ensure all elements inside copyTwo (Countdown, Scratch Card, Heading) are clean and crisp
       const copyTwoElements = copyTwo.querySelectorAll(
         ".scene-title, .scene-two__lead, .scene-two__divider, .ornament__rule, .ornament__gem, .scene-two__scratch, .scene-two__countdown-panel, .countdown__unit, .countdown__glyph, .countdown__message",
       );
@@ -138,71 +121,40 @@ export function useSceneScroll({ root, enabled, settled, reducedMotion }: Args) 
         clearProps: "filter,clipPath",
       });
 
-      // Play the classic bride and groom reveal when arriving at chapter 1
-      const playCoupleReveal = () => {
-        if (reducedMotion) {
-          gsap.set([arch, coupleImg, logo, amp, line, ...nameEls], { opacity: 1 });
-          return;
+      // Event listener for arriving back at the hero chapter
+      const unsubHero = onArrival("hero", () => {
+        if (namesRevealRef.current) {
+          if (namesRevealRef.current.progress() === 0) {
+            namesRevealRef.current.play();
+          } else {
+            namesRevealRef.current.progress(1);
+          }
         }
-        if (namesReveal.isActive()) return;
-        gsap.killTweensOf(petals);
-        gsap.set(petals, { opacity: 0, x: 0, y: 0, scale: 0.3 });
-        namesReveal.restart();
-      };
-
-      // Event listener for arriving at the couple hero chapter
-      const unsubCouple = onArrival("couple", () => {
-        playCoupleReveal();
       });
 
       // Event listener for arriving at the countdown chapter
       const unsubCountdown = onArrival("countdown", () => {
         copyTwo.classList.add("is-interactive");
-        // Dispatch window resize so ScratchCard foil canvas paints perfectly
         window.dispatchEvent(new Event("resize"));
       });
 
       return () => {
         namesReveal.kill();
-        gsap.killTweensOf(petals);
-        unsubCouple();
+        namesRevealRef.current = null;
+        unsubHero();
         unsubCountdown();
       };
     }, root);
 
     return () => ctx.revert();
-  }, [enabled, reducedMotion, root]);
+  }, [enabled, reducedMotion, root]); // Note: videoCompleted is excluded to prevent unmounting/reverting GSAP
 
-  // The script image rises into place once the first section is actually on screen.
-  useLayoutEffect(() => {
-    if (!enabled || !settled || !root.current) return;
-    const lettering = root.current.querySelector(".scene-lettering");
-    if (!lettering) return;
+  // Trigger reveal once the full video finishes its initial 19s playthrough
+  useEffect(() => {
+    if (!enabled) return;
 
-    if (reducedMotion) {
-      gsap.set(lettering, { opacity: 1, clearProps: "filter,transform" });
-      return;
+    if (videoCompleted && namesRevealRef.current) {
+      namesRevealRef.current.play();
     }
-
-    const tween = gsap.fromTo(
-      lettering,
-      { opacity: 0, y: 26, scale: 0.94, filter: "blur(8px)" },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        filter: "blur(0px)",
-        duration: 1.15,
-        ease: "power3.out",
-        delay: 0.06,
-        onComplete: () => {
-          gsap.set(lettering, { clearProps: "filter,transform" });
-        },
-      },
-    );
-
-    return () => {
-      tween.kill();
-    };
-  }, [enabled, settled, reducedMotion, root]);
+  }, [enabled, videoCompleted]);
 }

@@ -28,7 +28,7 @@ type Args = {
 export function useStageTransitions({
   stage,
   enabled,
-  settled = true,
+  settled: _settled = true,
   reducedMotion,
   onSceneChange,
   onStepChange,
@@ -83,19 +83,17 @@ export function useStageTransitions({
     const venueEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="venue"]');
     const rsvpEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="rsvp"]');
 
-    const titleOne = cinemaEl?.querySelector<HTMLElement>(".scene-copy--one");
-    const names = cinemaEl?.querySelector<HTMLElement>(".scene-names");
+    const heroEl = cinemaEl?.querySelector<HTMLElement>(".scene-hero");
     const bgTwo = cinemaEl?.querySelector<HTMLElement>(".scene-bg--two");
     const copyTwo = cinemaEl?.querySelector<HTMLElement>(".scene-copy--two");
 
     const layerMap: Record<number, HTMLElement | null> = {
       0: cinemaEl,
       1: cinemaEl,
-      2: cinemaEl,
-      3: day11El,
-      4: day12El,
-      5: venueEl,
-      6: rsvpEl,
+      2: day11El,
+      3: day12El,
+      4: venueEl,
+      5: rsvpEl,
     };
 
     const fromLayer = layerMap[from];
@@ -128,19 +126,9 @@ export function useStageTransitions({
               gsap.set(copyTwo, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
               copyTwo.classList.remove("is-interactive");
             }
-            if (names) gsap.set(names, { opacity: 0, pointerEvents: "none" });
-            if (titleOne) gsap.set(titleOne, { opacity: 1, pointerEvents: "auto" });
+            if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
           } else if (to === 1) {
-            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
-            if (copyTwo) {
-              gsap.set(copyTwo, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
-              copyTwo.classList.remove("is-interactive");
-            }
-            if (titleOne) gsap.set(titleOne, { opacity: 0, pointerEvents: "none" });
-            if (names) gsap.set(names, { opacity: 1, pointerEvents: "auto" });
-          } else if (to === 2) {
-            if (titleOne) gsap.set(titleOne, { opacity: 0, pointerEvents: "none" });
-            if (names) gsap.set(names, { opacity: 0, pointerEvents: "none" });
+            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
             if (bgTwo) gsap.set(bgTwo, { opacity: 1 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
@@ -156,23 +144,20 @@ export function useStageTransitions({
       },
     });
 
-    // CASE 1: Moving within Cinema (0: Title <-> 1: Bride & Groom <-> 2: Countdown)
+    // CASE 1: Moving within Cinema (0: Hero <-> 1: Countdown)
     if (fromLayer === cinemaEl && toLayer === cinemaEl) {
       if (cinemaEl) {
         gsap.set(cinemaEl, { autoAlpha: 1, opacity: 1, pointerEvents: "auto" });
       }
 
       // Hide the departing cinema sub-view
-      if (from === 0 && titleOne) {
-        tl.to(titleOne, { opacity: 0, y: -12, duration: duration * 0.7, ease: "power2.inOut" }, 0);
-        tl.set(titleOne, { pointerEvents: "none" });
-      } else if (from === 1 && names) {
-        tl.to(names, { opacity: 0, duration: duration * 0.7, ease: "power2.inOut" }, 0);
-        tl.set(names, { pointerEvents: "none" });
-      } else if (from === 2) {
+      if (from === 0 && heroEl) {
+        tl.to(heroEl, { opacity: 0, y: -14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+        tl.set(heroEl, { pointerEvents: "none" });
+      } else if (from === 1) {
         if (copyTwo) {
           copyTwo.classList.remove("is-interactive");
-          tl.to(copyTwo, { opacity: 0, autoAlpha: 0, y: 12, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+          tl.to(copyTwo, { opacity: 0, autoAlpha: 0, y: 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
           tl.set(copyTwo, { pointerEvents: "none" });
         }
         if (bgTwo) {
@@ -181,31 +166,24 @@ export function useStageTransitions({
       }
 
       // Reveal the arriving cinema sub-view
-      if (to === 0 && titleOne) {
-        tl.fromTo(titleOne, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration, ease }, duration * 0.15);
-        tl.set(titleOne, { pointerEvents: "auto" });
-      } else if (to === 1 && names) {
-        tl.set(names, { opacity: 1, y: 0, pointerEvents: "auto" }, duration * 0.1);
-        tl.add(() => {
-          void arriveAt("couple");
-        }, duration * 0.1);
-      } else if (to === 2) {
+      if (to === 0 && heroEl) {
+        tl.set(heroEl, { pointerEvents: "auto" });
+        tl.fromTo(heroEl, { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration, ease }, duration * 0.15);
+      } else if (to === 1) {
         if (bgTwo) {
           tl.to(bgTwo, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
         }
         if (copyTwo) {
           copyTwo.classList.add("is-interactive");
           tl.set(copyTwo, { pointerEvents: "auto" }, 0);
-          tl.fromTo(copyTwo, { opacity: 0, autoAlpha: 0, y: 12 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
+          tl.fromTo(copyTwo, { opacity: 0, autoAlpha: 0, y: 14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
         }
       }
     } else {
       // CASE 2: Moving across full stage layers
       if (fromLayer) {
-        // When leaving cinema for celebration days, hide internal couple photo and title immediately so nothing ghosts through
         if (fromLayer === cinemaEl) {
-          if (names) gsap.set(names, { opacity: 0, pointerEvents: "none" });
-          if (titleOne) gsap.set(titleOne, { opacity: 0, pointerEvents: "none" });
+          if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
         }
         tl.to(
           fromLayer,
@@ -227,16 +205,9 @@ export function useStageTransitions({
           if (to === 0) {
             if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
             if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
-            if (names) gsap.set(names, { opacity: 0, pointerEvents: "none" });
-            if (titleOne) gsap.set(titleOne, { opacity: 1, pointerEvents: "auto" });
+            if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
           } else if (to === 1) {
-            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
-            if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
-            if (titleOne) gsap.set(titleOne, { opacity: 0, pointerEvents: "none" });
-            if (names) gsap.set(names, { opacity: 1, pointerEvents: "auto" });
-          } else if (to === 2) {
-            if (titleOne) gsap.set(titleOne, { opacity: 0, pointerEvents: "none" });
-            if (names) gsap.set(names, { opacity: 0, pointerEvents: "none" });
+            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
             if (bgTwo) gsap.set(bgTwo, { opacity: 1 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 1, pointerEvents: "auto" });
@@ -277,30 +248,12 @@ export function useStageTransitions({
     }
   }, [goToStep]);
 
-  // 3-second automatic transition from Title (step 0) to Bride & Groom (step 1)
-  useEffect(() => {
-    if (!enabled || !settled) return;
-    if (currentStepRef.current !== 0 || hasAutoAdvancedRef.current) return;
-
-    clearAutoTimer();
-    autoTimerRef.current = window.setTimeout(() => {
-      if (currentStepRef.current === 0 && !hasAutoAdvancedRef.current) {
-        hasAutoAdvancedRef.current = true;
-        goToStep(1);
-      }
-    }, 2500);
-
-    return () => {
-      clearAutoTimer();
-    };
-  }, [enabled, settled, goToStep, clearAutoTimer]);
-
   // Set initial state and attach listeners
   useEffect(() => {
     const stageEl = stage.current;
     if (!enabled || !stageEl) return;
 
-    // Initialize layers: Step 0 (Title: "The P&L Wedding") is active, all others hidden
+    // Initialize layers: Step 0 (Hero: Lakshay & Prerna) is active, all others hidden
     const cinemaEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="cinema"]');
     const day11El = stageEl.querySelector<HTMLElement>('[data-stage-scene="day-dec-11"]');
     const day12El = stageEl.querySelector<HTMLElement>('[data-stage-scene="day-dec-12"]');
@@ -316,19 +269,16 @@ export function useStageTransitions({
       gsap.set(cinemaEl, { autoAlpha: 1, opacity: 1, pointerEvents: "auto" });
       cinemaEl.classList.add("is-current");
 
-      const names = cinemaEl.querySelector<HTMLElement>(".scene-names");
+      const heroEl = cinemaEl.querySelector<HTMLElement>(".scene-hero");
       const bgTwo = cinemaEl.querySelector<HTMLElement>(".scene-bg--two");
       const copyTwo = cinemaEl.querySelector<HTMLElement>(".scene-copy--two");
-      const titleOne = cinemaEl.querySelector<HTMLElement>(".scene-copy--one");
 
-      // Title screen is active on step 0
-      if (titleOne) gsap.set(titleOne, { opacity: 1, pointerEvents: "auto" });
-      if (names) gsap.set(names, { opacity: 0, pointerEvents: "none" });
+      if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
       if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
       if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
     }
 
-    void arriveAt("title");
+    void arriveAt("hero");
 
     // Gesture detection: One-Stroke touch with instant touchmove trigger
     let touchStartY = 0;

@@ -15,11 +15,8 @@
 
 .scene-bg {
   position: absolute;
-  inset: -3px 0;
-  transform: scale(1.02);
-  will-change: opacity, transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  inset: 0;
+  will-change: opacity;
 }
 
 .scene-bg--one {
@@ -41,16 +38,6 @@
   inset: 0;
   z-index: 5;
   pointer-events: none;
-}
-
-.cinema__veil {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at center, rgba(247, 241, 232, 0.18), transparent 55%),
-    linear-gradient(180deg, rgba(247, 241, 232, 0.08), transparent 28%);
 }
 
 .scene-copy {
@@ -361,184 +348,109 @@
   }
 }
 
-/* ---- Names & couple (after the title, same pavilion background) ------- */
-/*
- * Phones: names and the invitation line at the top, the couple standing in a
- * softly lit arch below. Wider screens: couple on the left, names on the right.
- * Only the couple's photo, the arch and the petals are new; type and colours
- * are the invitation's own.
- */
-
-.scene-names {
+/* ---- Opening Hero Page (Video 1 background with Top-Center Lockup) ---- */
+.scene-hero {
   position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  justify-items: center;
-  padding:
-    max(env(safe-area-inset-top), 6dvh)
-    max(1.25rem, env(safe-area-inset-right))
-    0
-    max(1.25rem, env(safe-area-inset-left));
-  color: var(--ink);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.scene-names__text {
-  grid-row: 1;
+  top: max(env(safe-area-inset-top), 2.5dvh);
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: min(92vw, 36rem);
+  z-index: 6;
+  pointer-events: auto;
 }
 
-.scene-names__title {
+.scene-hero .scene-logo {
+  opacity: 0;
+  width: clamp(3.6rem, 10vw, 5.6rem);
+  height: auto;
+  margin: 0 auto clamp(0.4rem, 1.2dvh, 0.9rem);
+  filter: drop-shadow(0 4px 14px rgba(247, 241, 232, 0.65));
+}
+
+.scene-hero .scene-names__title {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: min(13vw, 6.6dvh, 4.6rem);
-  line-height: 1;
-  color: var(--ink);
-  text-shadow: 0 2px 18px rgba(247, 241, 232, 0.9);
+  font-size: clamp(2.35rem, 8.2vw, 4.2rem);
+  line-height: 1.12;
+  color: #2e1b22;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.85),
+    0 2px 10px rgba(247, 241, 232, 0.65);
 }
 
-.scene-names__name {
+.scene-hero .scene-names__name {
   display: block;
-  letter-spacing: 0.04em;
-}
-
-.scene-names__amp {
-  display: block;
-  margin: 0.04em 0 0.02em;
-  font-style: italic;
-  font-size: 0.72em;
-  color: var(--gold-deep);
-}
-
-.scene-names__line {
-  max-width: 22rem;
-  margin: min(2.2dvh, 1.1rem) 0 0;
-  font-family: var(--font-body);
-  font-size: clamp(0.82rem, 3.6vw, 1rem);
-  line-height: 1.6;
-  letter-spacing: 0.03em;
-  color: var(--ink-soft);
-  text-shadow: 0 1px 12px rgba(247, 241, 232, 0.95);
-}
-
-.scene-names__portrait {
-  grid-row: 2;
-  position: relative;
-  align-self: end;
-  /* Explicit height (not a % of the grid row) so the width resolves from the aspect ratio. */
-  height: min(60vh, 128vw);
-  height: min(60dvh, 128vw);
-  aspect-ratio: 0.74;
-}
-
-/* A softly lit arch behind the couple, with the invitation's gold hairline. */
-.scene-names__arch {
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  top: 6%;
-  bottom: 0;
-  border: 1px solid rgba(196, 161, 92, 0.6);
-  border-bottom: 0;
-  border-radius: 999px 999px 0 0;
-  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(255, 252, 245, 0.9), rgba(247, 241, 232, 0.55) 60%, rgba(247, 241, 232, 0.15));
-  box-shadow: 0 0 60px rgba(230, 211, 163, 0.35);
-}
-
-.scene-names__couple {
-  position: absolute;
-  /* Centred with auto margins (no transform), so the reveal's scale never fights it. */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0 auto;
-  height: 96%;
-  width: auto;
-  max-width: none;
-  transform-origin: 50% 100%;
-  /* No drop-shadow: the arch's glow separates the couple, and a filter on this large
-     image would be re-rendered on every frame of the reveal. */
-  mask-image: linear-gradient(to top, transparent 0%, #000 6%, #000 100%);
-  -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 6%, #000 100%);
-}
-
-/* Petals start hidden behind the couple's shoulders; the reveal throws them out. */
-.scene-names__petals {
-  position: absolute;
-  left: 50%;
-  top: 34%;
-  width: 0;
-  height: 0;
-}
-
-.scene-names__petal {
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 80% 0 80% 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #2e1b22;
   opacity: 0;
 }
 
-.scene-names__petal--rose {
-  background: linear-gradient(135deg, #f2c6cc, #c98a96);
+.scene-hero .scene-names__amp {
+  display: inline-block;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.85rem, 6.2vw, 3.2rem);
+  line-height: 1;
+  margin: clamp(0.25rem, 0.9dvh, 0.5rem) 0 clamp(0.15rem, 0.6dvh, 0.4rem);
+  color: #a37e39;
+  opacity: 0;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.85),
+    0 2px 8px rgba(247, 241, 232, 0.65);
 }
 
-.scene-names__petal--blush {
-  background: linear-gradient(135deg, #fbe4e2, #e2a9b0);
+.scene-hero__married {
+  margin: clamp(0.7rem, 2.2dvh, 1.4rem) auto 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 3.2vw, 1.25rem);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  line-height: 1.45;
+  text-transform: none;
+  color: #3d272d;
+  text-align: center;
+  max-width: min(86vw, 22rem);
+  opacity: 0;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.85),
+    0 2px 8px rgba(247, 241, 232, 0.7);
 }
 
-.scene-names__petal--gold {
-  background: linear-gradient(135deg, var(--gold-soft), var(--antique-gold));
-}
-
-/* Wider screens: couple on the left, names on the right. */
-@media (orientation: landscape) {
-  .scene-names {
-    grid-template-rows: minmax(0, 1fr);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-    padding-top: max(env(safe-area-inset-top), 4dvh);
+@media (orientation: landscape) and (max-height: 600px) {
+  .scene-hero {
+    top: max(env(safe-area-inset-top), 1.5dvh);
   }
 
-  .scene-names__portrait {
-    grid-row: 1;
-    grid-column: 1;
-    height: 86vh;
-    height: 86dvh;
-    align-self: end;
-    justify-self: end;
-    margin-right: clamp(0rem, 3vw, 3rem);
+  .scene-hero .scene-logo {
+    width: clamp(2.6rem, 7vh, 3.8rem);
+    margin-bottom: 0.15rem;
   }
 
-  .scene-names__text {
-    grid-row: 1;
-    grid-column: 2;
-    justify-self: start;
-    margin-left: clamp(0rem, 2vw, 2rem);
+  .scene-hero .scene-names__title {
+    font-size: clamp(1.5rem, 6.5vh, 2.4rem);
+    line-height: 1.08;
   }
 
-  .scene-names__title {
-    font-size: min(7.5vw, 11dvh, 5.4rem);
+  .scene-hero .scene-names__amp {
+    font-size: clamp(1.3rem, 5.5vh, 2rem);
+    margin: 0.1rem 0;
   }
 
-  .scene-names__line {
-    font-size: clamp(0.82rem, 1.4vw, 1.05rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .scene-names__petals {
-    display: none;
+  .scene-hero__married {
+    margin-top: 0.25rem;
+    font-size: clamp(0.75rem, 3.2vh, 0.95rem);
+    line-height: 1.25;
   }
 }
 
@@ -583,9 +495,4 @@
 
 
 
-/* First section: the logo and lettering start 40% from the top of the screen. */
-.scene-copy--one {
-  justify-content: flex-start;
-  padding-top: 40vh;
-  padding-top: 40dvh;
-}
+
