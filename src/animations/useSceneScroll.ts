@@ -29,6 +29,13 @@ export function useSceneScroll({
   videoCompleted = false,
 }: Args) {
   const namesRevealRef = useRef<gsap.core.Timeline | null>(null);
+  const invitationRevealRef = useRef<gsap.core.Timeline | null>(null);
+  const countdownRevealRef = useRef<gsap.core.Timeline | null>(null);
+  const videoCompletedRef = useRef(videoCompleted);
+
+  useEffect(() => {
+    videoCompletedRef.current = videoCompleted;
+  }, [videoCompleted]);
 
   useLayoutEffect(() => {
     if (!enabled || !root.current) return;
@@ -116,36 +123,191 @@ export function useSceneScroll({
           .to(marriedText, { opacity: 1, duration: 0.45 }, "+=0.3");
       }
 
-      // Ensure all elements inside copyTwo (Countdown, Scratch Card, Heading) are clean and crisp
-      const copyTwoElements = copyTwo.querySelectorAll(
-        ".scene-title, .scene-two__lead, .scene-two__divider, .ornament__rule, .ornament__gem, .scene-two__scratch, .scene-two__countdown-panel, .countdown__unit, .countdown__glyph, .countdown__message",
-      );
-      gsap.set(copyTwoElements, {
-        opacity: 1,
-        clearProps: "filter,clipPath",
-      });
+      // --- Page 2: Formal Invitation Reveal (Paramveer & Barkha) ---
+      const blessingEl = formalCard?.querySelector<HTMLElement>(".scene-formal-card__blessing");
+      const personEls = formalCard?.querySelectorAll<HTMLElement>(".scene-formal-card__person");
+      const groomName = personEls?.[0]?.querySelector<HTMLElement>(".scene-formal-card__name");
+      const groomParents = personEls?.[0]?.querySelector<HTMLElement>(".scene-formal-card__parents");
+      const brideName = personEls?.[1]?.querySelector<HTMLElement>(".scene-formal-card__name");
+      const brideParents = personEls?.[1]?.querySelector<HTMLElement>(".scene-formal-card__parents");
 
-      // Event listener for arriving back at the hero chapter
+      if (blessingEl) gsap.set(blessingEl, { opacity: 0, y: 14 });
+      if (groomName) gsap.set(groomName, { opacity: 0, y: 16, scale: 0.96 });
+      if (groomParents) gsap.set(groomParents, { opacity: 0, y: 10 });
+      if (brideName) gsap.set(brideName, { opacity: 0, y: 16, scale: 0.96 });
+      if (brideParents) gsap.set(brideParents, { opacity: 0, y: 10 });
+
+      const invitationReveal = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+      invitationRevealRef.current = invitationReveal;
+
+      if (!reducedMotion) {
+        if (blessingEl) {
+          invitationReveal.fromTo(
+            blessingEl,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" },
+            0,
+          );
+        }
+        if (groomName) {
+          invitationReveal.fromTo(
+            groomName,
+            { opacity: 0, y: 16, scale: 0.96 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            "+=0.2",
+          );
+        }
+        if (groomParents) {
+          invitationReveal.fromTo(
+            groomParents,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.35",
+          );
+        }
+        if (brideName) {
+          invitationReveal.fromTo(
+            brideName,
+            { opacity: 0, y: 16, scale: 0.96 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            "+=0.2",
+          );
+        }
+        if (brideParents) {
+          invitationReveal.fromTo(
+            brideParents,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.35",
+          );
+        }
+        invitationReveal.set(
+          [blessingEl, groomName, groomParents, brideName, brideParents].filter(Boolean),
+          { clearProps: "transform,filter" },
+        );
+      } else {
+        invitationReveal.to(
+          [blessingEl, groomName, groomParents, brideName, brideParents].filter(Boolean),
+          { opacity: 1, duration: 0.4 },
+        );
+      }
+
+      // --- Page 3: Countdown & Scratch Card Reveal ---
+      const countdownKicker = copyTwo.querySelector<HTMLElement>(".scene-kicker");
+      const countdownHeading = copyTwo.querySelector<HTMLElement>(".scene-two__heading");
+      const countdownRules = copyTwo.querySelectorAll<HTMLElement>(".scene-two__divider .ornament__rule");
+      const countdownGem = copyTwo.querySelector<HTMLElement>(".scene-two__divider .ornament__gem");
+      const countdownScratch = copyTwo.querySelector<HTMLElement>(".scene-two__scratch");
+      const countdownPanel = copyTwo.querySelector<HTMLElement>(".scene-two__countdown-panel");
+
+      if (countdownKicker) gsap.set(countdownKicker, { opacity: 0, y: 8 });
+      if (countdownHeading) gsap.set(countdownHeading, { opacity: 0, y: 12, scale: 0.985 });
+      if (countdownRules && countdownRules.length > 0) gsap.set(countdownRules, { opacity: 0, scaleX: 0 });
+      if (countdownGem) gsap.set(countdownGem, { opacity: 0, scale: 0.4, rotation: -45 });
+      if (countdownScratch) gsap.set(countdownScratch, { opacity: 0, y: 12, scale: 0.98 });
+      if (countdownPanel) gsap.set(countdownPanel, { opacity: 0, y: 14, scale: 0.98 });
+
+      const countdownReveal = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+      countdownRevealRef.current = countdownReveal;
+
+      if (!reducedMotion) {
+        if (countdownKicker) {
+          countdownReveal.fromTo(
+            countdownKicker,
+            { opacity: 0, y: 8 },
+            { opacity: 1, y: 0, duration: 0.4 },
+            0,
+          );
+        }
+        if (countdownHeading) {
+          countdownReveal.fromTo(
+            countdownHeading,
+            { opacity: 0, y: 12, scale: 0.985 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.5 },
+            0.08,
+          );
+        }
+        if (countdownRules && countdownRules.length > 0) {
+          countdownReveal.fromTo(
+            countdownRules,
+            { opacity: 0, scaleX: 0 },
+            { opacity: 1, scaleX: 1, duration: 0.45, ease: "power2.inOut" },
+            0.22,
+          );
+        }
+        if (countdownGem) {
+          countdownReveal.fromTo(
+            countdownGem,
+            { opacity: 0, scale: 0.4, rotation: -45 },
+            { opacity: 1, scale: 1, rotation: 0, duration: 0.35, transformOrigin: "50% 50%" },
+            0.32,
+          );
+        }
+        if (countdownScratch) {
+          countdownReveal.fromTo(
+            countdownScratch,
+            { opacity: 0, y: 12, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.5 },
+            0.42,
+          );
+        }
+        if (countdownPanel) {
+          countdownReveal.fromTo(
+            countdownPanel,
+            { opacity: 0, y: 14, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.55 },
+            0.52,
+          );
+        }
+        countdownReveal.set(
+          [countdownKicker, countdownHeading, countdownRules, countdownGem, countdownScratch, countdownPanel].filter(Boolean),
+          { clearProps: "transform,filter" },
+        );
+      } else {
+        countdownReveal.to(
+          [countdownKicker, countdownHeading, countdownRules, countdownGem, countdownScratch, countdownPanel].filter(Boolean),
+          { opacity: 1, duration: 0.4 },
+        );
+      }
+
+      // Event listener for arriving back at the hero chapter (Page 1)
       const unsubHero = onArrival("hero", () => {
-        if (namesRevealRef.current) {
-          if (namesRevealRef.current.progress() === 0) {
-            namesRevealRef.current.play();
-          } else {
-            namesRevealRef.current.progress(1);
-          }
+        if (namesRevealRef.current && videoCompletedRef.current) {
+          namesRevealRef.current.restart();
         }
       });
 
-      // Event listener for arriving at the countdown chapter
+      // Event listener for arriving at the formal invitation chapter (Page 2)
+      const unsubInvitation = onArrival("invitation", () => {
+        if (invitationRevealRef.current) {
+          invitationRevealRef.current.restart();
+        }
+      });
+
+      // Event listener for arriving at the countdown chapter (Page 3)
       const unsubCountdown = onArrival("countdown", () => {
         copyTwo.classList.add("is-interactive");
         window.dispatchEvent(new Event("resize"));
+        if (countdownRevealRef.current) {
+          countdownRevealRef.current.restart();
+        }
       });
 
       return () => {
         namesReveal.kill();
         namesRevealRef.current = null;
+        invitationReveal.kill();
+        invitationRevealRef.current = null;
+        countdownReveal.kill();
+        countdownRevealRef.current = null;
         unsubHero();
+        unsubInvitation();
         unsubCountdown();
       };
     }, root);

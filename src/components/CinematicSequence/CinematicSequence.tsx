@@ -94,12 +94,12 @@ export function CinematicSequence({
       inert={!active}
     >
       <div className="cinema__viewport">
-        {/* Page 1 (Lakshay & Prerna - Video 1): 19s forward -> 16s<->19s Boomerang loop */}
+        {/* Page 1 (Lakshay & Prerna - Video 1): 19s forward -> 16.92s<->19s Boomerang loop */}
         <div className="scene-bg scene-bg--one">
           <SeamlessVideoBackground
             src={video1}
             active={active}
-            boomerangStart={16.0}
+            boomerangStart={16.92}
             boomerangEnd={19.0}
             onInitialComplete={handleVideoCompleted}
             onVideoRendered={handleVideoRendered}

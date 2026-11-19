@@ -1,6 +1,6 @@
 import { useLayoutEffect, type RefObject } from "react";
 import gsap from "gsap";
-import { onArrival, playToEnd } from "../stage/arrival";
+import { onArrival } from "../stage/arrival";
 import { addDetailReveal, buildHeadingReveal } from "./reveals";
 
 type Args = {
@@ -37,14 +37,10 @@ export function useVenueReveal({ root, enabled, reducedMotion }: Args) {
         gsap.set(frame, { clearProps: "transform" });
       });
 
-      const unsub = onArrival("venue", async ({ first }) => {
-        if (!first) {
-          headingTl.progress(1);
-          mapTl.progress(1);
-          return;
-        }
-        await playToEnd(headingTl);
-        await playToEnd(mapTl);
+      const unsub = onArrival("venue", async () => {
+        headingTl.restart();
+        await headingTl;
+        mapTl.restart();
       });
 
       return () => {

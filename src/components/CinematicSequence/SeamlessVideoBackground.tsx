@@ -61,7 +61,7 @@ export function SeamlessVideoBackground({
     let frameSeq = 0;
     let renderedNotified = false;
 
-    const bStart = boomerangStart ?? 16.9;
+    const bStart = boomerangStart ?? 16.92;
     const bEnd = boomerangEnd ?? 19;
 
     // Video always stays at full opacity (never flashes black)

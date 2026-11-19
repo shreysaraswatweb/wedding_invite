@@ -1,6 +1,6 @@
 import { useLayoutEffect, type RefObject } from "react";
 import gsap from "gsap";
-import { onArrival, playToEnd } from "../stage/arrival";
+import { onArrival } from "../stage/arrival";
 import { addDetailReveal, buildHeadingReveal } from "./reveals";
 
 type Args = {
@@ -55,14 +55,13 @@ export function useProgrammeScroll({ root, stage, sceneId, enabled, reducedMotio
       return tl;
     });
 
-    const unsub = onArrival(sceneId, async ({ first }) => {
-      if (!first) {
-        headingTl.progress(1);
-        eventTls.forEach((tl) => tl.progress(1));
-        return;
+    const unsub = onArrival(sceneId, async () => {
+      headingTl.restart();
+      await headingTl;
+      for (const tl of eventTls) {
+        tl.restart();
+        await tl;
       }
-      await playToEnd(headingTl);
-      for (const tl of eventTls) await playToEnd(tl);
     });
 
     return () => {

@@ -1,6 +1,6 @@
 import { useLayoutEffect, type RefObject } from "react";
 import gsap from "gsap";
-import { onArrival, playToEnd } from "../stage/arrival";
+import { onArrival } from "../stage/arrival";
 import { addDetailReveal, buildHeadingReveal } from "./reveals";
 
 type Args = {
@@ -40,16 +40,12 @@ export function useRsvpReveal({ root, enabled, reducedMotion }: Args) {
         .to(paw, { scale: 1, y: 0, rotation: 0, duration: 0.28, ease: "back.out(2)" })
         .set(paw, { clearProps: "opacity,transform,transformOrigin" });
 
-      const unsub = onArrival("rsvp", async ({ first }) => {
-        if (!first) {
-          headingTl.progress(1);
-          detailsTl.progress(1);
-          pawTl.progress(1);
-          return;
-        }
-        await playToEnd(headingTl);
-        await playToEnd(detailsTl);
-        await playToEnd(pawTl);
+      const unsub = onArrival("rsvp", async () => {
+        headingTl.restart();
+        await headingTl;
+        detailsTl.restart();
+        await detailsTl;
+        pawTl.restart();
       });
 
       return () => {
