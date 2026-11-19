@@ -25,11 +25,32 @@
   pointer-events: none;
 }
 
-.scene-bg--two {
+.scene-bg--card {
+  position: absolute;
+  inset: 0;
   z-index: 2;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
+  background: #141013;
+  will-change: opacity;
+}
+
+.scene-bg--card .scene-bg__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.scene-bg--two {
+  z-index: 3;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: opacity;
 }
 
 /* Groups both scenes' text so the stage can fade it as one; above the couple. */
@@ -492,6 +513,109 @@
     font-size: clamp(1.4rem, 9vh, 2rem);
   }
 }
+
+/* ==========================================================================
+   Page 2: Formal Wedding Invitation Card Text (Paramveer & Barkha)
+   ========================================================================== */
+.scene-formal-card {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 auto;
+  max-width: min(90vw, 34rem);
+  padding: max(env(safe-area-inset-top), clamp(1.5rem, 4dvh, 3rem))
+    max(env(safe-area-inset-right), clamp(1.2rem, 5vw, 2.2rem))
+    max(env(safe-area-inset-bottom), clamp(1.5rem, 4dvh, 3rem))
+    max(env(safe-area-inset-left), clamp(1.2rem, 5vw, 2.2rem));
+  pointer-events: none;
+  opacity: 0;
+  box-sizing: border-box;
+}
+
+.scene-formal-card__blessing {
+  margin: 0 0 clamp(1.8rem, 5dvh, 3.2rem);
+  max-width: 32ch;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.02rem, 3.4vw, 1.35rem);
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: #5c3826;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.45);
+}
+
+.scene-formal-card__couple {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.6rem, 4.2dvh, 2.8rem);
+  width: 100%;
+}
+
+.scene-formal-card__person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.scene-formal-card__name {
+  margin: 0 0 clamp(0.2rem, 0.7dvh, 0.45rem);
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(2.9rem, 9.6vw, 4.4rem);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: #9a2c22;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.scene-formal-card__parents {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(0.96rem, 3.1vw, 1.25rem);
+  line-height: 1.45;
+  letter-spacing: 0.025em;
+  color: #5c3826;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+.scene-formal-card__parents span {
+  display: block;
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .scene-formal-card {
+    padding: max(env(safe-area-inset-top), 1dvh) clamp(1rem, 4vw, 2rem);
+  }
+
+  .scene-formal-card__blessing {
+    margin-bottom: clamp(0.8rem, 2.5vh, 1.4rem);
+    font-size: clamp(0.85rem, 3.2vh, 1.05rem);
+    line-height: 1.35;
+  }
+
+  .scene-formal-card__couple {
+    gap: clamp(0.8rem, 2.5vh, 1.4rem);
+  }
+
+  .scene-formal-card__name {
+    font-size: clamp(1.8rem, 6.8vh, 2.8rem);
+    margin-bottom: 0.1rem;
+  }
+
+  .scene-formal-card__parents {
+    font-size: clamp(0.8rem, 3vh, 0.98rem);
+    line-height: 1.25;
+  }
+}
+
 
 
 

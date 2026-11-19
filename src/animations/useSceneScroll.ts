@@ -36,8 +36,10 @@ export function useSceneScroll({
     const ctx = gsap.context(() => {
       const hero = root.current!.querySelector<HTMLElement>(".scene-hero");
       const bgOne = root.current!.querySelector<HTMLElement>(".scene-bg--one");
+      const bgCard = root.current!.querySelector<HTMLElement>(".scene-bg--card");
       const bgTwo = root.current!.querySelector<HTMLElement>(".scene-bg--two");
       const copyTwo = root.current!.querySelector<HTMLElement>(".scene-copy--two");
+      const formalCard = root.current!.querySelector<HTMLElement>(".scene-formal-card");
 
       if (!hero || !bgOne || !bgTwo || !copyTwo) return;
 
@@ -46,8 +48,10 @@ export function useSceneScroll({
       const amp = hero.querySelector<HTMLElement>(".scene-names__amp");
       const marriedText = hero.querySelector<HTMLElement>(".scene-hero__married");
 
-      // Initial state: Step 0 (Hero page with Video 1 active, Countdown hidden)
+      // Initial state: Step 0 (Hero page with Video 1 active, Page 2 & Countdown hidden)
       gsap.set(bgOne, { opacity: 1 });
+      if (bgCard) gsap.set(bgCard, { opacity: 0 });
+      if (formalCard) gsap.set(formalCard, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
       gsap.set(bgTwo, { opacity: 0 });
       gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
       gsap.set(hero, { opacity: 1, pointerEvents: "auto" });

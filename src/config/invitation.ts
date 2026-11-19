@@ -202,7 +202,7 @@ export const invitation: InvitationConfig = {
   coupleNames: {
     first: "Lakshay",
     second: "Prerna",
-    invitationLine: "Together with their families, invite you to share their joy",
+    invitationLine: "Are Getting Married",
   },
   logo: "/images/lp-logo.png",
   song: {

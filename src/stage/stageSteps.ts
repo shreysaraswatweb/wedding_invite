@@ -1,5 +1,6 @@
 export type StageStepId =
   | "hero"
+  | "invitation"
   | "countdown"
   | "day-dec-11"
   | "day-dec-12"
@@ -14,6 +15,7 @@ export type StageStep = {
 
 export const STAGE_STEPS: StageStep[] = [
   { id: "hero", sceneId: "cinema", label: "Lakshay & Prerna" },
+  { id: "invitation", sceneId: "cinema", label: "Wedding Invitation" },
   { id: "countdown", sceneId: "cinema", label: "Countdown" },
   { id: "day-dec-11", sceneId: "day-dec-11", label: "11 December" },
   { id: "day-dec-12", sceneId: "day-dec-12", label: "12 December" },

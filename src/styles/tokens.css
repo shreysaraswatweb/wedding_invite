@@ -18,7 +18,7 @@
   --font-display: "Cormorant Garamond", "Cormorant", "Libre Baskerville", Georgia, serif;
   --font-opening: var(--font-display);
   --font-body: "Libre Baskerville", Georgia, serif;
-  --font-script: var(--font-display);
+  --font-script: "Alex Brush", "Great Vibes", "Cormorant Garamond", cursive;
 }
 
 *,

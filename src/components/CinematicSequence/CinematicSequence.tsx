@@ -8,6 +8,7 @@ import { ScratchCard } from "../ScratchCard/ScratchCard";
 import { SeamlessVideoBackground } from "./SeamlessVideoBackground";
 import countdownVideo from "../../assests/videos/gemini_generated_video_15ad4f22.mp4";
 import video1 from "../../assests/wedding_invite_assests/1.mp4";
+import image2 from "../../assests/wedding_invite_assests/2.jpg";
 import "./CinematicSequence.css";
 
 function CopyableDates({ label, dateTime }: { label: string; dateTime: string }) {
@@ -93,18 +94,27 @@ export function CinematicSequence({
       inert={!active}
     >
       <div className="cinema__viewport">
-        {/* Page 1 (Lakshay & Prerna - Are Getting Married): 19s forward -> 16s<->19s Boomerang loop */}
+        {/* Page 1 (Lakshay & Prerna - Video 1): 19s forward -> 16s<->19s Boomerang loop */}
         <div className="scene-bg scene-bg--one">
           <SeamlessVideoBackground
             src={video1}
             active={active}
-            boomerangStart={16.9}
+            boomerangStart={16.0}
             boomerangEnd={19.0}
             onInitialComplete={handleVideoCompleted}
             onVideoRendered={handleVideoRendered}
           />
         </div>
-        {/* Scene 2 (Countdown & Scratch): Seamless looping video background */}
+        {/* Page 2 (Wedding Invitation): 2.jpg background */}
+        <div className="scene-bg scene-bg--card">
+          <img
+            src={image2}
+            alt="Invitation background"
+            className="scene-bg__image"
+            loading="eager"
+          />
+        </div>
+        {/* Page 3 (Countdown & Scratch): Seamless looping video background */}
         <div className="scene-bg scene-bg--two">
           <SeamlessVideoBackground
             src={countdownVideo}
@@ -115,7 +125,7 @@ export function CinematicSequence({
 
         {/* All of this scene's text: faded out by the stage as the next scene arrives. */}
         <div className="cinema__copy" data-stage-copy>
-          {/* Top-Center Hero: Logo Reveal, Bride & Groom Names, "Are Getting Married" */}
+          {/* Top-Center Hero: Logo Reveal, Bride & Groom Names, "Together with their families..." (Page 1) */}
           <div className="scene-hero" aria-labelledby="scene-hero-title">
             <img
               className="scene-logo"
@@ -128,6 +138,31 @@ export function CinematicSequence({
               <span className="scene-names__name">{invitation.coupleNames.second}</span>
             </h1>
             <p className="scene-hero__married">{invitation.coupleNames.invitationLine}</p>
+          </div>
+
+          {/* Formal Wedding Invitation Card (Page 2) */}
+          <div className="scene-formal-card" aria-label="Formal Wedding Invitation">
+            <p className="scene-formal-card__blessing">
+              With Divine blessings and the love of our elders, we warmly invite you to grace the wedding ceremony of our children
+            </p>
+
+            <div className="scene-formal-card__couple">
+              <div className="scene-formal-card__person">
+                <h2 className="scene-formal-card__name">Paramveer</h2>
+                <p className="scene-formal-card__parents">
+                  <span>S/o Mrs. Prem Lata Yadav &amp;</span>
+                  <span>Mr. Girish Kumar</span>
+                </p>
+              </div>
+
+              <div className="scene-formal-card__person">
+                <h2 className="scene-formal-card__name">Barkha</h2>
+                <p className="scene-formal-card__parents">
+                  <span>D/o Mrs. Sunita Jain &amp;</span>
+                  <span>Mr. Anand Jain</span>
+                </p>
+              </div>
+            </div>
           </div>
 
           <div

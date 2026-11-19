@@ -84,16 +84,19 @@ export function useStageTransitions({
     const rsvpEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="rsvp"]');
 
     const heroEl = cinemaEl?.querySelector<HTMLElement>(".scene-hero");
+    const bgCard = cinemaEl?.querySelector<HTMLElement>(".scene-bg--card");
     const bgTwo = cinemaEl?.querySelector<HTMLElement>(".scene-bg--two");
     const copyTwo = cinemaEl?.querySelector<HTMLElement>(".scene-copy--two");
+    const formalCardEl = cinemaEl?.querySelector<HTMLElement>(".scene-formal-card");
 
     const layerMap: Record<number, HTMLElement | null> = {
       0: cinemaEl,
       1: cinemaEl,
-      2: day11El,
-      3: day12El,
-      4: venueEl,
-      5: rsvpEl,
+      2: cinemaEl,
+      3: day11El,
+      4: day12El,
+      5: venueEl,
+      6: rsvpEl,
     };
 
     const fromLayer = layerMap[from];
@@ -121,14 +124,36 @@ export function useStageTransitions({
         // If active in cinema, strictly ensure correct sub-view is visible and active
         if (toLayer === cinemaEl) {
           if (to === 0) {
+            // Page 1: Hero (Video 1)
+            if (bgCard) gsap.set(bgCard, { opacity: 0 });
             if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
               copyTwo.classList.remove("is-interactive");
             }
+            if (formalCardEl) {
+              gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+            }
             if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
           } else if (to === 1) {
+            // Page 2: Standalone background (2.jpg) + Formal Invitation Card
             if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
+            if (copyTwo) {
+              gsap.set(copyTwo, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+              copyTwo.classList.remove("is-interactive");
+            }
+            if (bgCard) gsap.set(bgCard, { opacity: 1 });
+            if (formalCardEl) {
+              gsap.set(formalCardEl, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
+            }
+          } else if (to === 2) {
+            // Page 3: Countdown (Video 2)
+            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+            if (bgCard) gsap.set(bgCard, { opacity: 0 });
+            if (formalCardEl) {
+              gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+            }
             if (bgTwo) gsap.set(bgTwo, { opacity: 1 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
@@ -144,17 +169,25 @@ export function useStageTransitions({
       },
     });
 
-    // CASE 1: Moving within Cinema (0: Hero <-> 1: Countdown)
+    // CASE 1: Moving within Cinema (0: Hero <-> 1: Page 2 Invitation <-> 2: Countdown)
     if (fromLayer === cinemaEl && toLayer === cinemaEl) {
       if (cinemaEl) {
         gsap.set(cinemaEl, { autoAlpha: 1, opacity: 1, pointerEvents: "auto" });
       }
 
-      // Hide the departing cinema sub-view
+      // Hide departing sub-view
       if (from === 0 && heroEl) {
         tl.to(heroEl, { opacity: 0, y: -14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
         tl.set(heroEl, { pointerEvents: "none" });
       } else if (from === 1) {
+        if (formalCardEl) {
+          tl.to(formalCardEl, { opacity: 0, autoAlpha: 0, y: isForward ? -14 : 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+          tl.set(formalCardEl, { pointerEvents: "none" });
+        }
+        if (to !== 1 && bgCard) {
+          tl.to(bgCard, { opacity: 0, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        }
+      } else if (from === 2) {
         if (copyTwo) {
           copyTwo.classList.remove("is-interactive");
           tl.to(copyTwo, { opacity: 0, autoAlpha: 0, y: 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
@@ -165,18 +198,23 @@ export function useStageTransitions({
         }
       }
 
-      // Reveal the arriving cinema sub-view
+      // Reveal arriving sub-view
       if (to === 0 && heroEl) {
+        if (bgCard) tl.to(bgCard, { opacity: 0, duration: duration * 0.8, ease: "power2.inOut" }, 0);
         tl.set(heroEl, { pointerEvents: "auto" });
-        tl.fromTo(heroEl, { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration, ease }, duration * 0.15);
+        tl.fromTo(heroEl, { opacity: 0, y: isForward ? 14 : -14 }, { opacity: 1, y: 0, duration, ease }, duration * 0.15);
       } else if (to === 1) {
-        if (bgTwo) {
-          tl.to(bgTwo, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        if (bgCard) tl.to(bgCard, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        if (formalCardEl) {
+          tl.set(formalCardEl, { pointerEvents: "auto" }, 0);
+          tl.fromTo(formalCardEl, { opacity: 0, autoAlpha: 0, y: isForward ? 14 : -14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
         }
+      } else if (to === 2) {
+        if (bgTwo) tl.to(bgTwo, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
         if (copyTwo) {
           copyTwo.classList.add("is-interactive");
           tl.set(copyTwo, { pointerEvents: "auto" }, 0);
-          tl.fromTo(copyTwo, { opacity: 0, autoAlpha: 0, y: 14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
+          tl.fromTo(copyTwo, { opacity: 0, autoAlpha: 0, y: isForward ? 14 : -14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
         }
       }
     } else {
@@ -184,6 +222,7 @@ export function useStageTransitions({
       if (fromLayer) {
         if (fromLayer === cinemaEl) {
           if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+          if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, pointerEvents: "none" });
         }
         tl.to(
           fromLayer,
@@ -203,11 +242,21 @@ export function useStageTransitions({
         // If entering cinema, configure sub-views for the target step
         if (toLayer === cinemaEl) {
           if (to === 0) {
+            if (bgCard) gsap.set(bgCard, { opacity: 0 });
             if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
             if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
+            if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
             if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
           } else if (to === 1) {
             if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
+            if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
+            if (bgCard) gsap.set(bgCard, { opacity: 1 });
+            if (formalCardEl) gsap.set(formalCardEl, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
+          } else if (to === 2) {
+            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+            if (bgCard) gsap.set(bgCard, { opacity: 0 });
+            if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
             if (bgTwo) gsap.set(bgTwo, { opacity: 1 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 1, pointerEvents: "auto" });
@@ -270,10 +319,14 @@ export function useStageTransitions({
       cinemaEl.classList.add("is-current");
 
       const heroEl = cinemaEl.querySelector<HTMLElement>(".scene-hero");
+      const bgCard = cinemaEl.querySelector<HTMLElement>(".scene-bg--card");
       const bgTwo = cinemaEl.querySelector<HTMLElement>(".scene-bg--two");
       const copyTwo = cinemaEl.querySelector<HTMLElement>(".scene-copy--two");
+      const formalCardEl = cinemaEl.querySelector<HTMLElement>(".scene-formal-card");
 
       if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
+      if (bgCard) gsap.set(bgCard, { opacity: 0 });
+      if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
       if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
       if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
     }
