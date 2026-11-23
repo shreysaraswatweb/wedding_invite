@@ -86,17 +86,26 @@ export function useStageTransitions({
     const heroEl = cinemaEl?.querySelector<HTMLElement>(".scene-hero");
     const bgCard = cinemaEl?.querySelector<HTMLElement>(".scene-bg--card");
     const bgTwo = cinemaEl?.querySelector<HTMLElement>(".scene-bg--two");
+    const bgThree = cinemaEl?.querySelector<HTMLElement>(".scene-bg--three");
+    const bgFour = cinemaEl?.querySelector<HTMLElement>(".scene-bg--four");
+    const bgFive = cinemaEl?.querySelector<HTMLElement>(".scene-bg--five");
     const copyTwo = cinemaEl?.querySelector<HTMLElement>(".scene-copy--two");
+    const copyThree = cinemaEl?.querySelector<HTMLElement>(".scene-copy--three");
+    const copyFour = cinemaEl?.querySelector<HTMLElement>(".scene-copy--four");
+    const copyFive = cinemaEl?.querySelector<HTMLElement>(".scene-copy--five");
     const formalCardEl = cinemaEl?.querySelector<HTMLElement>(".scene-formal-card");
 
     const layerMap: Record<number, HTMLElement | null> = {
       0: cinemaEl,
       1: cinemaEl,
       2: cinemaEl,
-      3: day11El,
-      4: day12El,
-      5: venueEl,
-      6: rsvpEl,
+      3: cinemaEl,
+      4: cinemaEl,
+      5: cinemaEl,
+      6: day11El,
+      7: day12El,
+      8: venueEl,
+      9: rsvpEl,
     };
 
     const fromLayer = layerMap[from];
@@ -123,42 +132,44 @@ export function useStageTransitions({
 
         // If active in cinema, strictly ensure correct sub-view is visible and active
         if (toLayer === cinemaEl) {
+          const allBgs = [bgCard, bgTwo, bgThree, bgFour, bgFive];
+          const allCopies = [copyTwo, copyThree, copyFour, copyFive];
+          allBgs.forEach((bg) => {
+            if (bg) gsap.set(bg, { opacity: 0 });
+          });
+          allCopies.forEach((copy) => {
+            if (copy) gsap.set(copy, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+          });
+          if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+          if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+          if (copyTwo) copyTwo.classList.remove("is-interactive");
+
           if (to === 0) {
             // Page 1: Hero (Video 1)
-            if (bgCard) gsap.set(bgCard, { opacity: 0 });
-            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
-            if (copyTwo) {
-              gsap.set(copyTwo, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
-              copyTwo.classList.remove("is-interactive");
-            }
-            if (formalCardEl) {
-              gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
-            }
             if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
           } else if (to === 1) {
             // Page 2: Standalone background (2.jpg) + Formal Invitation Card
-            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
-            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
-            if (copyTwo) {
-              gsap.set(copyTwo, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
-              copyTwo.classList.remove("is-interactive");
-            }
             if (bgCard) gsap.set(bgCard, { opacity: 1 });
-            if (formalCardEl) {
-              gsap.set(formalCardEl, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
-            }
+            if (formalCardEl) gsap.set(formalCardEl, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
           } else if (to === 2) {
             // Page 3: Countdown (Video 2)
-            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
-            if (bgCard) gsap.set(bgCard, { opacity: 0 });
-            if (formalCardEl) {
-              gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
-            }
             if (bgTwo) gsap.set(bgTwo, { opacity: 1 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
               copyTwo.classList.add("is-interactive");
             }
+          } else if (to === 3) {
+            // Page 4: Haldi (Video 3)
+            if (bgThree) gsap.set(bgThree, { opacity: 1 });
+            if (copyThree) gsap.set(copyThree, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
+          } else if (to === 4) {
+            // Page 5: Video 4
+            if (bgFour) gsap.set(bgFour, { opacity: 1 });
+            if (copyFour) gsap.set(copyFour, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
+          } else if (to === 5) {
+            // Page 6: Video 5
+            if (bgFive) gsap.set(bgFive, { opacity: 1 });
+            if (copyFive) gsap.set(copyFive, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
           }
         }
 
@@ -190,11 +201,35 @@ export function useStageTransitions({
       } else if (from === 2) {
         if (copyTwo) {
           copyTwo.classList.remove("is-interactive");
-          tl.to(copyTwo, { opacity: 0, autoAlpha: 0, y: 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+          tl.to(copyTwo, { opacity: 0, autoAlpha: 0, y: isForward ? -14 : 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
           tl.set(copyTwo, { pointerEvents: "none" });
         }
-        if (bgTwo) {
+        if (to !== 2 && bgTwo) {
           tl.to(bgTwo, { opacity: 0, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        }
+      } else if (from === 3) {
+        if (copyThree) {
+          tl.to(copyThree, { opacity: 0, autoAlpha: 0, y: isForward ? -14 : 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+          tl.set(copyThree, { pointerEvents: "none" });
+        }
+        if (to !== 3 && bgThree) {
+          tl.to(bgThree, { opacity: 0, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        }
+      } else if (from === 4) {
+        if (copyFour) {
+          tl.to(copyFour, { opacity: 0, autoAlpha: 0, y: isForward ? -14 : 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+          tl.set(copyFour, { pointerEvents: "none" });
+        }
+        if (to !== 4 && bgFour) {
+          tl.to(bgFour, { opacity: 0, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        }
+      } else if (from === 5) {
+        if (copyFive) {
+          tl.to(copyFive, { opacity: 0, autoAlpha: 0, y: isForward ? -14 : 14, duration: duration * 0.7, ease: "power2.inOut" }, 0);
+          tl.set(copyFive, { pointerEvents: "none" });
+        }
+        if (to !== 5 && bgFive) {
+          tl.to(bgFive, { opacity: 0, duration: duration * 0.8, ease: "power2.inOut" }, 0);
         }
       }
 
@@ -215,6 +250,24 @@ export function useStageTransitions({
           copyTwo.classList.add("is-interactive");
           tl.set(copyTwo, { pointerEvents: "auto" }, 0);
           tl.fromTo(copyTwo, { opacity: 0, autoAlpha: 0, y: isForward ? 14 : -14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
+        }
+      } else if (to === 3) {
+        if (bgThree) tl.to(bgThree, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        if (copyThree) {
+          tl.set(copyThree, { pointerEvents: "auto" }, 0);
+          tl.fromTo(copyThree, { opacity: 0, autoAlpha: 0, y: isForward ? 14 : -14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
+        }
+      } else if (to === 4) {
+        if (bgFour) tl.to(bgFour, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        if (copyFour) {
+          tl.set(copyFour, { pointerEvents: "auto" }, 0);
+          tl.fromTo(copyFour, { opacity: 0, autoAlpha: 0, y: isForward ? 14 : -14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
+        }
+      } else if (to === 5) {
+        if (bgFive) tl.to(bgFive, { opacity: 1, duration: duration * 0.8, ease: "power2.inOut" }, 0);
+        if (copyFive) {
+          tl.set(copyFive, { pointerEvents: "auto" }, 0);
+          tl.fromTo(copyFive, { opacity: 0, autoAlpha: 0, y: isForward ? 14 : -14 }, { opacity: 1, autoAlpha: 1, y: 0, duration, ease }, duration * 0.15);
         }
       }
     } else {
@@ -241,27 +294,38 @@ export function useStageTransitions({
 
         // If entering cinema, configure sub-views for the target step
         if (toLayer === cinemaEl) {
+          const allBgs = [bgCard, bgTwo, bgThree, bgFour, bgFive];
+          const allCopies = [copyTwo, copyThree, copyFour, copyFive];
+          allBgs.forEach((bg) => {
+            if (bg) gsap.set(bg, { opacity: 0 });
+          });
+          allCopies.forEach((copy) => {
+            if (copy) gsap.set(copy, { opacity: 0, pointerEvents: "none" });
+          });
+          if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
+          if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+          if (copyTwo) copyTwo.classList.remove("is-interactive");
+
           if (to === 0) {
-            if (bgCard) gsap.set(bgCard, { opacity: 0 });
-            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
-            if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
-            if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
             if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
           } else if (to === 1) {
-            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
-            if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
-            if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
             if (bgCard) gsap.set(bgCard, { opacity: 1 });
             if (formalCardEl) gsap.set(formalCardEl, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
           } else if (to === 2) {
-            if (heroEl) gsap.set(heroEl, { opacity: 0, pointerEvents: "none" });
-            if (bgCard) gsap.set(bgCard, { opacity: 0 });
-            if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
             if (bgTwo) gsap.set(bgTwo, { opacity: 1 });
             if (copyTwo) {
               gsap.set(copyTwo, { opacity: 1, pointerEvents: "auto" });
               copyTwo.classList.add("is-interactive");
             }
+          } else if (to === 3) {
+            if (bgThree) gsap.set(bgThree, { opacity: 1 });
+            if (copyThree) gsap.set(copyThree, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
+          } else if (to === 4) {
+            if (bgFour) gsap.set(bgFour, { opacity: 1 });
+            if (copyFour) gsap.set(copyFour, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
+          } else if (to === 5) {
+            if (bgFive) gsap.set(bgFive, { opacity: 1 });
+            if (copyFive) gsap.set(copyFive, { opacity: 1, autoAlpha: 1, pointerEvents: "auto" });
           }
         }
 
@@ -321,7 +385,9 @@ export function useStageTransitions({
       const heroEl = cinemaEl.querySelector<HTMLElement>(".scene-hero");
       const bgCard = cinemaEl.querySelector<HTMLElement>(".scene-bg--card");
       const bgTwo = cinemaEl.querySelector<HTMLElement>(".scene-bg--two");
+      const bgThree = cinemaEl.querySelector<HTMLElement>(".scene-bg--three");
       const copyTwo = cinemaEl.querySelector<HTMLElement>(".scene-copy--two");
+      const copyThree = cinemaEl.querySelector<HTMLElement>(".scene-copy--three");
       const formalCardEl = cinemaEl.querySelector<HTMLElement>(".scene-formal-card");
 
       if (heroEl) gsap.set(heroEl, { opacity: 1, pointerEvents: "auto" });
@@ -329,6 +395,8 @@ export function useStageTransitions({
       if (formalCardEl) gsap.set(formalCardEl, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
       if (bgTwo) gsap.set(bgTwo, { opacity: 0 });
       if (copyTwo) gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
+      if (bgThree) gsap.set(bgThree, { opacity: 0 });
+      if (copyThree) gsap.set(copyThree, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
     }
 
     void arriveAt("hero");

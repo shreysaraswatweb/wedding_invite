@@ -23,7 +23,7 @@ export default function App() {
   const reducedMotion = usePrefersReducedMotion();
   const stageRef = useRef<HTMLDivElement>(null);
   const songRef = useRef<HTMLAudioElement>(null);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
   const userMutedRef = useRef(false);
 
   // Initialize Lenis inertial smooth scrolling
@@ -51,10 +51,16 @@ export default function App() {
     if (!audio) return;
     const startAt = invitation.song.startSeconds;
     if (audio.currentTime < 1) {
-      try {
+      if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
         audio.currentTime = startAt;
-      } catch {
-        /* metadata loading */
+      } else {
+        const onMetadata = () => {
+          if (audio.currentTime < 1) {
+            audio.currentTime = startAt;
+          }
+        };
+        audio.addEventListener("loadedmetadata", onMetadata, { once: true });
+        audio.addEventListener("canplay", onMetadata, { once: true });
       }
     }
   };
@@ -66,13 +72,6 @@ export default function App() {
     audio.muted = false;
     seekToStart();
 
-    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      seekToStart();
-    } else {
-      audio.addEventListener("loadedmetadata", seekToStart, { once: true });
-    }
-    audio.addEventListener("playing", seekToStart, { once: true });
-
     audio
       .play()
       .then(() => {
@@ -80,12 +79,12 @@ export default function App() {
       })
       .catch(() => {
         // Autoplay blocked by browser policy until interaction
+        audio.muted = true;
         setMuted(true);
       });
   };
 
-  const toggleMute = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleMute = () => {
     const audio = songRef.current;
     if (!audio) return;
 
@@ -105,10 +104,38 @@ export default function App() {
         .then(() => {
           setMuted(false);
         })
-        .catch(() => {});
-      setMuted(false);
+        .catch(() => {
+          audio.muted = true;
+          setMuted(true);
+        });
     }
   };
+
+  // Sync state with native audio element events
+  useEffect(() => {
+    const audio = songRef.current;
+    if (!audio) return;
+
+    const onPlay = () => setMuted(false);
+    const onPause = () => {
+      if (userMutedRef.current || audio.paused) {
+        setMuted(true);
+      }
+    };
+    const onVolumeChange = () => {
+      setMuted(audio.muted || audio.paused);
+    };
+
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("volumechange", onVolumeChange);
+
+    return () => {
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("volumechange", onVolumeChange);
+    };
+  }, []);
 
   const handleSongEnded = () => {
     const audio = songRef.current;
@@ -133,8 +160,10 @@ export default function App() {
 
     // Unlock on the first user interaction if browser blocked autoplay
     const unlockOnGesture = (e: Event) => {
-      // If the interaction happened on the sound toggle itself, let toggleMute handle it
-      if ((e.target as HTMLElement)?.closest(".sound-toggle")) {
+      // If the interaction happened on the sound toggle itself, toggleMute handles it
+      const target = e.target as HTMLElement | null;
+      if (target?.closest(".sound-toggle")) {
+        cleanup();
         return;
       }
 
@@ -188,20 +217,18 @@ export default function App() {
       <button
         type="button"
         className={`sound-toggle ${muted ? "is-muted" : "is-playing"}`}
-        aria-pressed={muted}
-        aria-label={muted ? "Unmute music" : "Mute music"}
+        aria-pressed={!muted}
+        aria-label={muted ? "Play music" : "Mute music"}
         onClick={toggleMute}
-        onPointerDown={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 10h3.2L12 6.2v11.6L7.2 14H4z" />
+          <path d="M4 10h3.2L12 6.2v11.6L7.2 14H4z" fill="currentColor" />
           {muted ? (
-            <path d="M16 9.5l5 5M21 9.5l-5 5" />
+            <path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           ) : (
             <>
-              <path d="M15.2 9.2a3.6 3.6 0 0 1 0 5.6" />
-              <path d="M17.4 7a6.4 6.4 0 0 1 0 10" />
+              <path d="M15.2 9.2a3.6 3.6 0 0 1 0 5.6" strokeWidth="1.8" />
+              <path d="M17.6 7a6.6 6.6 0 0 1 0 10" strokeWidth="1.8" />
             </>
           )}
         </svg>

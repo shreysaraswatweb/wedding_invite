@@ -31,6 +31,7 @@ export function useSceneScroll({
   const namesRevealRef = useRef<gsap.core.Timeline | null>(null);
   const invitationRevealRef = useRef<gsap.core.Timeline | null>(null);
   const countdownRevealRef = useRef<gsap.core.Timeline | null>(null);
+  const haldiRevealRef = useRef<gsap.core.Timeline | null>(null);
   const videoCompletedRef = useRef(videoCompleted);
 
   useEffect(() => {
@@ -45,15 +46,32 @@ export function useSceneScroll({
       const bgOne = root.current!.querySelector<HTMLElement>(".scene-bg--one");
       const bgCard = root.current!.querySelector<HTMLElement>(".scene-bg--card");
       const bgTwo = root.current!.querySelector<HTMLElement>(".scene-bg--two");
+      const bgThree = root.current!.querySelector<HTMLElement>(".scene-bg--three");
+      const bgFour = root.current!.querySelector<HTMLElement>(".scene-bg--four");
+      const bgFive = root.current!.querySelector<HTMLElement>(".scene-bg--five");
       const copyTwo = root.current!.querySelector<HTMLElement>(".scene-copy--two");
+      const copyThree = root.current!.querySelector<HTMLElement>(".scene-copy--three");
+      const copyFour = root.current!.querySelector<HTMLElement>(".scene-copy--four");
+      const copyFive = root.current!.querySelector<HTMLElement>(".scene-copy--five");
       const formalCard = root.current!.querySelector<HTMLElement>(".scene-formal-card");
 
       if (!hero || !bgOne || !bgTwo || !copyTwo) return;
 
       const logo = hero.querySelector<HTMLElement>(".scene-logo");
-      const nameEls = hero.querySelectorAll<HTMLElement>(".scene-names__name");
-      const amp = hero.querySelector<HTMLElement>(".scene-names__amp");
-      const marriedText = hero.querySelector<HTMLElement>(".scene-hero__married");
+      const nameFirst = hero.querySelector<HTMLElement>(".scene-hero__name--first, .scene-hero__art--lakshay, .scene-names__name--first");
+      const ampWrap = hero.querySelector<HTMLElement>(".scene-hero__amp, .scene-hero__art--amp, .scene-names__amp-wrap");
+      const nameSecond = hero.querySelector<HTMLElement>(".scene-hero__name--second, .scene-hero__art--prerna, .scene-names__name--second");
+      const marriedText = hero.querySelector<HTMLElement>(".scene-hero__married, .scene-hero__art--married");
+      const heroDivider = hero.querySelector<HTMLElement>(".scene-hero__divider, .scene-hero__art--divider");
+
+      const haldiEl = root.current!.querySelector<HTMLElement>(".scene-haldi");
+      const haldiTitle = haldiEl?.querySelector<HTMLElement>(".scene-haldi__title, .scene-haldi__art--title");
+      const haldiDate = haldiEl?.querySelector<HTMLElement>(".scene-haldi__date, .scene-haldi__art--date");
+      const haldiDivider = haldiEl?.querySelector<HTMLElement>(".scene-haldi__divider, .scene-haldi__art--divider");
+      const haldiDay = haldiEl?.querySelector<HTMLElement>(".scene-haldi__day, .scene-haldi__art--day");
+      const haldiVenue = haldiEl?.querySelector<HTMLElement>(".scene-haldi__venue, .scene-haldi__art--venue");
+      const haldiTime = haldiEl?.querySelector<HTMLElement>(".scene-haldi__time, .scene-haldi__art--time");
+      const haldiDirections = haldiEl?.querySelector<HTMLElement>(".scene-haldi__directions");
 
       // Initial state: Step 0 (Hero page with Video 1 active, Page 2 & Countdown hidden)
       gsap.set(bgOne, { opacity: 1 });
@@ -61,19 +79,34 @@ export function useSceneScroll({
       if (formalCard) gsap.set(formalCard, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
       gsap.set(bgTwo, { opacity: 0 });
       gsap.set(copyTwo, { opacity: 0, pointerEvents: "none" });
+      if (bgThree) gsap.set(bgThree, { opacity: 0 });
+      if (copyThree) gsap.set(copyThree, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+      if (bgFour) gsap.set(bgFour, { opacity: 0 });
+      if (copyFour) gsap.set(copyFour, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
+      if (bgFive) gsap.set(bgFive, { opacity: 0 });
+      if (copyFive) gsap.set(copyFive, { opacity: 0, autoAlpha: 0, pointerEvents: "none" });
       gsap.set(hero, { opacity: 1, pointerEvents: "auto" });
 
       // Elements to be revealed: start completely hidden
       if (logo) gsap.set(logo, { opacity: 0, y: -14, scale: 0.88 });
-      if (nameEls && nameEls[0]) gsap.set(nameEls[0], { opacity: 0, y: 12 });
-      if (amp) gsap.set(amp, { opacity: 0, y: 10, scale: 0.8 });
-      if (nameEls && nameEls[1]) gsap.set(nameEls[1], { opacity: 0, y: 12 });
-      if (marriedText) gsap.set(marriedText, { opacity: 0, y: 14 });
+      if (nameFirst) gsap.set(nameFirst, { opacity: 0, y: 14, scale: 0.96 });
+      if (ampWrap) gsap.set(ampWrap, { opacity: 0, y: 10, scale: 0.8 });
+      if (nameSecond) gsap.set(nameSecond, { opacity: 0, y: 14, scale: 0.96 });
+      if (marriedText) gsap.set(marriedText, { opacity: 0, y: 12 });
+      if (heroDivider) gsap.set(heroDivider, { opacity: 0, scaleX: 0 });
+
+      if (haldiTitle) gsap.set(haldiTitle, { opacity: 0, y: 16, scale: 0.94 });
+      if (haldiDate) gsap.set(haldiDate, { opacity: 0, y: 12 });
+      if (haldiDivider) gsap.set(haldiDivider, { opacity: 0, scaleX: 0 });
+      if (haldiDay) gsap.set(haldiDay, { opacity: 0, y: 10 });
+      if (haldiVenue) gsap.set(haldiVenue, { opacity: 0, y: 14, scale: 0.97 });
+      if (haldiTime) gsap.set(haldiTime, { opacity: 0, y: 10 });
+      if (haldiDirections) gsap.set(haldiDirections, { opacity: 0, y: 10, scale: 0.95 });
 
       // Distinct 3-Stage Reveal Timeline:
       // Stage 1: Logo revealed all by itself, then settles.
-      // Stage 2: Names & gilded '&' revealed ("Lakshay & Prerna"), then settle.
-      // Stage 3: Invitation line revealed together.
+      // Stage 2: Names & gilded botanical '&' revealed ("Lakshay & Prerna"), then settle.
+      // Stage 3: "ARE GETTING MARRIED" + ornamental filigree divider reveal together.
       const namesReveal = gsap.timeline({
         paused: true,
         defaults: { ease: "power2.out" },
@@ -81,46 +114,62 @@ export function useSceneScroll({
       namesRevealRef.current = namesReveal;
 
       if (!reducedMotion) {
-        namesReveal
-          // --- STAGE 1: Logo reveals separately ---
-          .fromTo(
+        if (logo) {
+          namesReveal.fromTo(
             logo,
             { opacity: 0, scale: 0.88, y: -14 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: "power2.out" },
+            { opacity: 1, scale: 1, y: 0, duration: 0.85, ease: "power2.out" },
             0,
-          )
-          // --- STAGE 2: Once logo is revealed, Names and '&' reveal ---
-          .fromTo(
-            nameEls[0],
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" },
-            "+=0.35",
-          )
-          .fromTo(
-            amp,
+          );
+        }
+        if (nameFirst) {
+          namesReveal.fromTo(
+            nameFirst,
+            { opacity: 0, y: 14, scale: 0.96 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            "+=0.25",
+          );
+        }
+        if (ampWrap) {
+          namesReveal.fromTo(
+            ampWrap,
             { opacity: 0, y: 10, scale: 0.75 },
             { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.8)" },
             "-=0.35",
-          )
-          .fromTo(
-            nameEls[1],
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" },
+          );
+        }
+        if (nameSecond) {
+          namesReveal.fromTo(
+            nameSecond,
+            { opacity: 0, y: 14, scale: 0.96 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
             "-=0.35",
-          )
-          // --- STAGE 3: Once names are revealed, Invitation line reveals together ---
-          .fromTo(
+          );
+        }
+        if (marriedText) {
+          namesReveal.fromTo(
             marriedText,
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 0.85, ease: "power2.out" },
-            "+=0.4",
-          )
-          .set([logo, nameEls[0], amp, nameEls[1], marriedText].filter(Boolean), { clearProps: "transform,filter" });
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" },
+            "+=0.3",
+          );
+        }
+        if (heroDivider) {
+          namesReveal.fromTo(
+            heroDivider,
+            { opacity: 0, scaleX: 0 },
+            { opacity: 1, scaleX: 1, duration: 0.7, ease: "power2.inOut" },
+            "-=0.4",
+          );
+        }
+        namesReveal.set([logo, nameFirst, ampWrap, nameSecond, marriedText, heroDivider].filter(Boolean), {
+          clearProps: "transform,filter",
+        });
       } else {
         namesReveal
-          .to(logo, { opacity: 1, duration: 0.45 })
-          .to([nameEls[0], amp, nameEls[1]].filter(Boolean), { opacity: 1, duration: 0.45 }, "+=0.3")
-          .to(marriedText, { opacity: 1, duration: 0.45 }, "+=0.3");
+          .to(logo, { opacity: 1, duration: 0.4 })
+          .to([nameFirst, ampWrap, nameSecond].filter(Boolean), { opacity: 1, duration: 0.4 }, "+=0.2")
+          .to([marriedText, heroDivider].filter(Boolean), { opacity: 1, duration: 0.4 }, "+=0.2");
       }
 
       // --- Page 2: Formal Invitation Reveal (Paramveer & Barkha) ---
@@ -276,6 +325,88 @@ export function useSceneScroll({
         );
       }
 
+      // --- Page 4: Haldi Ceremony Reveal ---
+      const haldiReveal = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+      haldiRevealRef.current = haldiReveal;
+
+      if (!reducedMotion) {
+        if (haldiTitle) {
+          haldiReveal.fromTo(
+            haldiTitle,
+            { opacity: 0, y: 16, scale: 0.94 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power2.out" },
+            0,
+          );
+        }
+        if (haldiDate) {
+          haldiReveal.fromTo(
+            haldiDate,
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
+            "+=0.2",
+          );
+        }
+        if (haldiDivider) {
+          haldiReveal.fromTo(
+            haldiDivider,
+            { opacity: 0, scaleX: 0 },
+            { opacity: 1, scaleX: 1, duration: 0.6, ease: "power2.inOut" },
+            "-=0.35",
+          );
+        }
+        if (haldiDay) {
+          haldiReveal.fromTo(
+            haldiDay,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.2",
+          );
+        }
+        if (haldiVenue) {
+          haldiReveal.fromTo(
+            haldiVenue,
+            { opacity: 0, y: 14, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            "+=0.15",
+          );
+        }
+        if (haldiTime) {
+          haldiReveal.fromTo(
+            haldiTime,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" },
+            "-=0.25",
+          );
+        }
+        if (haldiDirections) {
+          haldiReveal.fromTo(
+            haldiDirections,
+            { opacity: 0, y: 10, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: "power2.out" },
+            "-=0.2",
+          );
+        }
+        haldiReveal.set(
+          [haldiTitle, haldiDate, haldiDivider, haldiDay, haldiVenue, haldiTime, haldiDirections].filter(Boolean),
+          { clearProps: "transform,filter" },
+        );
+      } else {
+        if (haldiTitle) {
+          haldiReveal.to(haldiTitle, { opacity: 1, duration: 0.4 });
+        }
+        const g1 = [haldiDate, haldiDivider].filter(Boolean) as HTMLElement[];
+        if (g1.length > 0) {
+          haldiReveal.to(g1, { opacity: 1, duration: 0.4 }, "+=0.2");
+        }
+        const g2 = [haldiDay, haldiVenue, haldiTime, haldiDirections].filter(Boolean) as HTMLElement[];
+        if (g2.length > 0) {
+          haldiReveal.to(g2, { opacity: 1, duration: 0.4 }, "+=0.2");
+        }
+      }
+
       // Event listener for arriving back at the hero chapter (Page 1)
       const unsubHero = onArrival("hero", () => {
         if (namesRevealRef.current && videoCompletedRef.current) {
@@ -299,6 +430,24 @@ export function useSceneScroll({
         }
       });
 
+      // Event listener for arriving at the celebrations / Haldi chapter (Page 4)
+      const unsubCelebrations = onArrival("celebrations", () => {
+        window.dispatchEvent(new Event("resize"));
+        if (haldiRevealRef.current) {
+          haldiRevealRef.current.restart();
+        }
+      });
+
+      // Event listener for arriving at ceremony 4 (Page 5)
+      const unsubCeremonyFour = onArrival("ceremony-four", () => {
+        window.dispatchEvent(new Event("resize"));
+      });
+
+      // Event listener for arriving at ceremony 5 (Page 6)
+      const unsubCeremonyFive = onArrival("ceremony-five", () => {
+        window.dispatchEvent(new Event("resize"));
+      });
+
       return () => {
         namesReveal.kill();
         namesRevealRef.current = null;
@@ -306,9 +455,14 @@ export function useSceneScroll({
         invitationRevealRef.current = null;
         countdownReveal.kill();
         countdownRevealRef.current = null;
+        haldiReveal.kill();
+        haldiRevealRef.current = null;
         unsubHero();
         unsubInvitation();
         unsubCountdown();
+        unsubCelebrations();
+        unsubCeremonyFour();
+        unsubCeremonyFive();
       };
     }, root);
 

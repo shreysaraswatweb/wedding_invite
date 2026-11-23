@@ -53,6 +53,42 @@
   will-change: opacity;
 }
 
+.scene-bg--three,
+.scene-bg--four,
+.scene-bg--five {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: opacity;
+  background: #fbf9f4;
+}
+
+.scene-bg--three .seamless-video,
+.scene-bg--four .seamless-video,
+.scene-bg--five .seamless-video {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  height: min(100dvh, calc(100vw * 16 / 9));
+  background: transparent;
+}
+
+.scene-bg--three .seamless-video__media,
+.scene-bg--three .seamless-video__canvas,
+.scene-bg--four .seamless-video__media,
+.scene-bg--four .seamless-video__canvas,
+.scene-bg--five .seamless-video__media,
+.scene-bg--five .seamless-video__canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
 /* Groups both scenes' text so the stage can fade it as one; above the couple. */
 .cinema__copy {
   position: absolute;
@@ -78,7 +114,10 @@
 }
 
 /* Later cinema copy stays hidden until scroll reaches it, so the open card is section one. */
-.scene-copy--two {
+.scene-copy--two,
+.scene-copy--three,
+.scene-copy--four,
+.scene-copy--five {
   opacity: 0;
 }
 
@@ -372,106 +411,109 @@
 /* ---- Opening Hero Page (Video 1 background with Top-Center Lockup) ---- */
 .scene-hero {
   position: absolute;
-  top: max(env(safe-area-inset-top), 2.5dvh);
-  left: 50%;
-  transform: translateX(-50%);
+  top: max(env(safe-area-inset-top), 2dvh);
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   text-align: center;
-  width: min(92vw, 36rem);
+  width: min(94vw, 32rem);
   z-index: 6;
   pointer-events: auto;
+  box-sizing: border-box;
 }
 
 .scene-hero .scene-logo {
   opacity: 0;
-  width: clamp(3.6rem, 10vw, 5.6rem);
+  width: clamp(7rem, 30vw, 11rem);
   height: auto;
-  margin: 0 auto clamp(0.4rem, 1.2dvh, 0.9rem);
-  filter: drop-shadow(0 4px 14px rgba(247, 241, 232, 0.65));
+  margin: 0 auto clamp(0.2rem, 0.8dvh, 0.45rem);
+  filter: drop-shadow(0 4px 14px rgba(255, 255, 255, 0.85));
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: opacity, transform;
 }
 
-.scene-hero .scene-names__title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.scene-hero__names {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(2.35rem, 8.2vw, 4.2rem);
-  line-height: 1.12;
-  color: #2e1b22;
-  text-shadow:
-    0 1px 2px rgba(255, 255, 255, 0.85),
-    0 2px 10px rgba(247, 241, 232, 0.65);
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(0.35rem, 1.2vw, 0.65rem);
+  width: 100%;
+  line-height: 1.15;
 }
 
-.scene-hero .scene-names__name {
-  display: block;
-  font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: #2e1b22;
+.scene-hero__name {
+  font-family: var(--font-hero-script, "Satisfy", "Marck Script", cursive);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 7.6vw, 3.8rem);
+  color: #c87440;
+  text-shadow:
+    0 1px 3px rgba(255, 255, 255, 0.95),
+    0 2px 12px rgba(255, 255, 255, 0.8);
   opacity: 0;
+  will-change: opacity, transform;
+  letter-spacing: 0.01em;
 }
 
-.scene-hero .scene-names__amp {
-  display: inline-block;
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(1.85rem, 6.2vw, 3.2rem);
-  line-height: 1;
-  margin: clamp(0.25rem, 0.9dvh, 0.5rem) 0 clamp(0.15rem, 0.6dvh, 0.4rem);
-  color: #a37e39;
-  opacity: 0;
+.scene-hero__amp {
+  font-family: var(--font-hero-script, "Satisfy", "Marck Script", cursive);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 6.2vw, 3rem);
+  color: #c87440;
   text-shadow:
-    0 1px 2px rgba(255, 255, 255, 0.85),
-    0 2px 8px rgba(247, 241, 232, 0.65);
+    0 1px 3px rgba(255, 255, 255, 0.95),
+    0 2px 12px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
 }
 
 .scene-hero__married {
-  margin: clamp(0.7rem, 2.2dvh, 1.4rem) auto 0;
-  font-family: var(--font-display);
-  font-size: clamp(0.95rem, 3.2vw, 1.25rem);
-  font-weight: 500;
-  letter-spacing: 0.015em;
-  line-height: 1.45;
-  text-transform: none;
-  color: #3d272d;
+  margin: clamp(0.25rem, 0.9dvh, 0.55rem) auto 0;
+  font-family: var(--font-hero-caps, "Cinzel", "Cormorant Garamond", Georgia, serif);
+  font-size: clamp(0.85rem, 2.7vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: clamp(0.22em, 0.7vw, 0.32em);
+  line-height: 1.35;
+  text-transform: uppercase;
+  color: #6e7f5d;
   text-align: center;
-  max-width: min(86vw, 22rem);
+  max-width: min(90vw, 26rem);
   opacity: 0;
+  will-change: opacity, transform;
   text-shadow:
-    0 1px 2px rgba(255, 255, 255, 0.85),
-    0 2px 8px rgba(247, 241, 232, 0.7);
+    0 1px 3px rgba(255, 255, 255, 0.95),
+    0 2px 8px rgba(255, 255, 255, 0.8);
 }
 
 @media (orientation: landscape) and (max-height: 600px) {
   .scene-hero {
-    top: max(env(safe-area-inset-top), 1.5dvh);
+    top: max(env(safe-area-inset-top), 1dvh);
   }
 
   .scene-hero .scene-logo {
-    width: clamp(2.6rem, 7vh, 3.8rem);
-    margin-bottom: 0.15rem;
+    width: clamp(4.5rem, 20vh, 7rem);
+    margin-bottom: 0.1rem;
   }
 
-  .scene-hero .scene-names__title {
-    font-size: clamp(1.5rem, 6.5vh, 2.4rem);
-    line-height: 1.08;
+  .scene-hero__name {
+    font-size: clamp(1.6rem, 7.5vh, 2.4rem);
   }
 
-  .scene-hero .scene-names__amp {
-    font-size: clamp(1.3rem, 5.5vh, 2rem);
-    margin: 0.1rem 0;
+  .scene-hero__amp {
+    font-size: clamp(1.4rem, 6.5vh, 2rem);
   }
 
   .scene-hero__married {
-    margin-top: 0.25rem;
-    font-size: clamp(0.75rem, 3.2vh, 0.95rem);
-    line-height: 1.25;
+    font-size: clamp(0.7rem, 3.2vh, 0.95rem);
+    margin-top: 0.15rem;
   }
 }
 
@@ -616,6 +658,227 @@
   .scene-formal-card__parents {
     font-size: clamp(0.8rem, 3vh, 0.98rem);
     line-height: 1.25;
+  }
+}
+
+/* ---- Page 4: Haldi Ceremony (Video 3 background with Top Lockup) ---- */
+.scene-copy--three,
+.scene-copy--four,
+.scene-copy--five {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  height: min(100dvh, calc(100vw * 16 / 9));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+  box-sizing: border-box;
+  padding-top: max(env(safe-area-inset-top), 2%);
+}
+
+.scene-haldi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.scene-haldi__title {
+  margin: 0 auto;
+  font-family: var(--font-haldi-script, "Caveat", "Satisfy", "Ephesis", cursive);
+  font-weight: 500;
+  font-size: clamp(3.2rem, 11vw, 5.2rem);
+  line-height: 1.05;
+  color: #ea580c;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 14px rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__date {
+  margin: clamp(0.12rem, 0.7dvh, 0.35rem) auto 0;
+  font-family: var(--font-haldi-display, "Cormorant Garamond", serif);
+  font-size: clamp(1.25rem, 4.4vw, 2.15rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #e5922e;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 10px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__divider {
+  display: block;
+  width: clamp(8.5rem, 38vw, 14rem);
+  height: auto;
+  margin: clamp(0.2rem, 0.85dvh, 0.45rem) auto 0;
+  transform-origin: center center;
+  filter: drop-shadow(0 1px 4px rgba(255, 255, 255, 0.8));
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__day {
+  margin: clamp(0.16rem, 0.75dvh, 0.38rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12rem;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.72rem, 2.45vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: #942630;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__venue {
+  margin: clamp(0.2rem, 0.85dvh, 0.42rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-style: normal;
+  gap: 0.16rem;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.66rem, 2.2vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: clamp(0.06em, 0.2vw, 0.1em);
+  line-height: 1.45;
+  text-transform: uppercase;
+  color: #942630;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  max-width: min(88vw, 24rem);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__time {
+  margin: clamp(0.2rem, 0.85dvh, 0.42rem) auto 0;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.74rem, 2.45vw, 1.06rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: #942630;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__directions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: clamp(0.45rem, 1.3dvh, 0.85rem) auto 0;
+  padding: clamp(0.38rem, 1dvh, 0.55rem) clamp(1.1rem, 3.8vw, 1.55rem);
+  border: 1px solid rgba(148, 38, 48, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.65rem, 2.1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #942630;
+  box-shadow: 0 3px 12px rgba(148, 38, 48, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  will-change: opacity, transform;
+}
+
+.scene-haldi__directions:hover {
+  transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #942630;
+  color: #781a23;
+  box-shadow: 0 4px 16px rgba(148, 38, 48, 0.25);
+}
+
+.scene-haldi__directions:active {
+  transform: scale(0.97);
+}
+
+.scene-haldi__directions:focus-visible {
+  outline: 2px solid #942630;
+  outline-offset: 3px;
+}
+
+.scene-haldi__directions-icon {
+  width: clamp(0.85rem, 2.5vw, 1.05rem);
+  height: clamp(0.85rem, 2.5vw, 1.05rem);
+  flex-shrink: 0;
+  color: #ea580c;
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .scene-copy--three {
+    padding-top: max(env(safe-area-inset-top), 1%);
+  }
+
+  .scene-haldi__title {
+    font-size: clamp(1.8rem, 8.5vh, 2.6rem);
+  }
+
+  .scene-haldi__date {
+    font-size: clamp(0.9rem, 4.2vh, 1.25rem);
+    margin-top: 0.1rem;
+  }
+
+  .scene-haldi__divider {
+    width: clamp(6.5rem, 26vh, 9.5rem);
+    margin-top: 0.12rem;
+  }
+
+  .scene-haldi__day {
+    font-size: clamp(0.6rem, 2.8vh, 0.8rem);
+    margin-top: 0.1rem;
+  }
+
+  .scene-haldi__venue {
+    font-size: clamp(0.55rem, 2.6vh, 0.75rem);
+    margin-top: 0.12rem;
+    line-height: 1.3;
+  }
+
+  .scene-haldi__time {
+    font-size: clamp(0.62rem, 2.9vh, 0.82rem);
+    margin-top: 0.12rem;
+  }
+
+  .scene-haldi__directions {
+    margin-top: 0.18rem;
+    padding: 0.28rem 0.85rem;
+    font-size: clamp(0.55rem, 2.4vh, 0.72rem);
+  }
+
+  .scene-haldi__directions-icon {
+    width: 0.75rem;
+    height: 0.75rem;
   }
 }
 

@@ -64,6 +64,10 @@ export function SeamlessVideoBackground({
     const bStart = boomerangStart ?? 16.92;
     const bEnd = boomerangEnd ?? 19;
 
+    vid.muted = true;
+    vid.defaultMuted = true;
+    vid.volume = 0;
+
     // Video always stays at full opacity (never flashes black)
     vid.style.opacity = "1";
     canvas.style.display = "none";
@@ -249,6 +253,10 @@ export function SeamlessVideoBackground({
     if (!vidA) return;
 
     let renderedNotified = false;
+    vidA.muted = true;
+    vidA.defaultMuted = true;
+    vidA.volume = 0;
+
     const notifyRendered = () => {
       if (!renderedNotified) {
         renderedNotified = true;
@@ -288,6 +296,10 @@ export function SeamlessVideoBackground({
 
     const vidB = videoBRef.current;
     if (!vidB) return;
+
+    vidB.muted = true;
+    vidB.defaultMuted = true;
+    vidB.volume = 0;
 
     vidA.style.opacity = "1";
     vidB.style.opacity = "0";

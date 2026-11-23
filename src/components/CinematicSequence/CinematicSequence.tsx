@@ -9,6 +9,9 @@ import { SeamlessVideoBackground } from "./SeamlessVideoBackground";
 import countdownVideo from "../../assests/videos/gemini_generated_video_15ad4f22.mp4";
 import video1 from "../../assests/wedding_invite_assests/1.mp4";
 import image2 from "../../assests/wedding_invite_assests/2.jpg";
+import video3 from "../../assests/wedding_invite_assests/3.mp4";
+import video4 from "../../assests/wedding_invite_assests/4.mp4";
+import video5 from "../../assests/wedding_invite_assests/5.mp4";
 import "./CinematicSequence.css";
 
 function CopyableDates({ label, dateTime }: { label: string; dateTime: string }) {
@@ -122,22 +125,48 @@ export function CinematicSequence({
             crossfadeDuration={1.4}
           />
         </div>
+        {/* Page 4 (Video 3): 3.mp4 background */}
+        <div className="scene-bg scene-bg--three">
+          <SeamlessVideoBackground
+            src={video3}
+            active={active}
+            crossfadeDuration={1.4}
+          />
+        </div>
+        {/* Page 5 (Video 4): 4.mp4 background */}
+        <div className="scene-bg scene-bg--four">
+          <SeamlessVideoBackground
+            src={video4}
+            active={active}
+            crossfadeDuration={1.4}
+          />
+        </div>
+        {/* Page 6 (Video 5): 5.mp4 background */}
+        <div className="scene-bg scene-bg--five">
+          <SeamlessVideoBackground
+            src={video5}
+            active={active}
+            crossfadeDuration={1.4}
+          />
+        </div>
 
         {/* All of this scene's text: faded out by the stage as the next scene arrives. */}
         <div className="cinema__copy" data-stage-copy>
-          {/* Top-Center Hero: Logo Reveal, Bride & Groom Names, "Together with their families..." (Page 1) */}
+          {/* Top-Center Hero: Logo, Bride & Groom Names, "ARE GETTING MARRIED" */}
           <div className="scene-hero" aria-labelledby="scene-hero-title">
             <img
               className="scene-logo"
               src={invitation.logo}
-              alt="LP monogram"
+              alt="VS monogram with peacocks"
             />
-            <h1 id="scene-hero-title" className="scene-names__title">
-              <span className="scene-names__name">{invitation.coupleNames.first}</span>
-              <span className="scene-names__amp">&amp;</span>
-              <span className="scene-names__name">{invitation.coupleNames.second}</span>
+            <h1 id="scene-hero-title" className="scene-hero__names">
+              <span className="scene-hero__name scene-hero__name--first">{invitation.coupleNames.first}</span>
+              <span className="scene-hero__amp">&amp;</span>
+              <span className="scene-hero__name scene-hero__name--second">{invitation.coupleNames.second}</span>
             </h1>
-            <p className="scene-hero__married">{invitation.coupleNames.invitationLine}</p>
+            <p className="scene-hero__married">
+              {invitation.coupleNames.invitationLine}
+            </p>
           </div>
 
           {/* Formal Wedding Invitation Card (Page 2) */}
@@ -204,6 +233,75 @@ export function CinematicSequence({
                 />
               </div>
             </div>
+          </div>
+
+          {/* Page 4: Haldi Ceremony with 3.mp4 background */}
+          <div
+            className="scene-copy scene-copy--three"
+            aria-label="Haldi Ceremony Invitation"
+          >
+            <div className="scene-haldi">
+              <h2 className="scene-haldi__title">Haldi</h2>
+
+              <p className="scene-haldi__date">31st December, 2026</p>
+
+              <img
+                className="scene-haldi__divider"
+                src="/images/haldi-divider.png"
+                alt=""
+                aria-hidden="true"
+              />
+
+              <p className="scene-haldi__day">
+                <span>THURSDAY</span>
+                <span>AT</span>
+              </p>
+
+              <address className="scene-haldi__venue">
+                <span>SHRI NILESH NACHANKAR, 88,</span>
+                <span>SHIVKRUPA NIWAS, INDIRA DEVI TOWN,</span>
+                <span>WATHODA LAYOUT, NAGPUR</span>
+              </address>
+
+              <p className="scene-haldi__time">7:30 PM ONWARDS</p>
+
+              <a
+                className="scene-haldi__directions"
+                href="https://maps.app.goo.gl/BYWBTCGawCotxKJ86"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Get direction to Haldi ceremony venue on Google Maps (opens in a new tab)"
+              >
+                <svg
+                  className="scene-haldi__directions-icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <span>Get Direction</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Page 5: Ceremony 4 with 4.mp4 background */}
+          <div
+            className="scene-copy scene-copy--four"
+            aria-label="Wedding Celebration"
+          >
+            {/* Copy container for 4.mp4 */}
+          </div>
+
+          {/* Page 6: Ceremony 5 with 5.mp4 background */}
+          <div
+            className="scene-copy scene-copy--five"
+            aria-label="Wedding Ceremony"
+          >
+            {/* Copy container for 5.mp4 */}
           </div>
         </div>
       </div>

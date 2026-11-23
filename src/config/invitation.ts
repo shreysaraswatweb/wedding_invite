@@ -200,21 +200,21 @@ export const invitation: InvitationConfig = {
   },
   couplePhoto: "/images/couple.png",
   coupleNames: {
-    first: "Lakshay",
-    second: "Prerna",
-    invitationLine: "Are Getting Married",
+    first: "Vaibhav",
+    second: "Sanskruti",
+    invitationLine: "ARE GETTING MARRIED",
   },
-  logo: "/images/lp-logo.png",
+  logo: "/images/vs-peacock-logo.png",
   song: {
     src: "/audio/tainu-leke.mp3",
     startSeconds: 25,
   },
   wedding: {
-    // 11 December 2026, the first day of celebrations, from the start of the day in Gurugram.
-    startsAt: "2026-12-11T00:00:00+05:30",
+    // 1 January 2027, the wedding celebration date.
+    startsAt: "2027-01-01T00:00:00+05:30",
     timeZone: "Asia/Kolkata",
     celebrationMessage: "The celebrations have begun",
-    datesLabel: "11 & 12 December 2026",
+    datesLabel: "1st January 2027",
     scratchLabel: "Scratch me",
   },
   motion: {
