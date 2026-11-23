@@ -19,6 +19,8 @@ type SeamlessVideoBackgroundProps = {
   ambient?: boolean;
   /** When set, delays starting video playback until this stage step is arrived at */
   startOnArrival?: string;
+  /** When true, explicitly holds video playback paused at 0s */
+  paused?: boolean;
 };
 
 /**
@@ -39,6 +41,7 @@ export function SeamlessVideoBackground({
   onInitialComplete,
   ambient = false,
   startOnArrival,
+  paused = false,
 }: SeamlessVideoBackgroundProps) {
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
@@ -277,7 +280,7 @@ export function SeamlessVideoBackground({
         })
       );
     } else {
-      if (active) {
+      if (active && !paused) {
         startForwardPlayback();
       } else {
         pausePlayback();
@@ -318,7 +321,7 @@ export function SeamlessVideoBackground({
       unsubArrival?.();
       unsubOthers.forEach((u) => u());
     };
-  }, [active, isBoomerang, boomerangStart, boomerangEnd, startOnArrival]);
+  }, [active, isBoomerang, boomerangStart, boomerangEnd, startOnArrival, paused]);
 
   // -------------------------------------------------------------
   // STANDARD PLAYBACK MODE (Single Player or Dual A/B Crossfade)
@@ -475,7 +478,7 @@ export function SeamlessVideoBackground({
     ambVid.defaultMuted = true;
     ambVid.volume = 0;
 
-    if (active && !startOnArrival) {
+    if (active && !startOnArrival && !paused) {
       ambVid.play().catch(() => {});
     } else {
       ambVid.pause();
@@ -484,7 +487,7 @@ export function SeamlessVideoBackground({
     const onVisibilityChange = () => {
       if (document.hidden) {
         ambVid.pause();
-      } else if (active && !startOnArrival) {
+      } else if (active && !startOnArrival && !paused) {
         ambVid.play().catch(() => {});
       }
     };
@@ -518,7 +521,7 @@ export function SeamlessVideoBackground({
       }
       ambVid.pause();
     };
-  }, [active, ambient, src, startOnArrival]);
+  }, [active, ambient, src, startOnArrival, paused]);
 
   return (
     <div
@@ -533,7 +536,7 @@ export function SeamlessVideoBackground({
             muted
             loop
             playsInline
-            autoPlay={!startOnArrival}
+            autoPlay={!startOnArrival && !paused}
             preload="auto"
             disablePictureInPicture
             disableRemotePlayback
@@ -549,7 +552,7 @@ export function SeamlessVideoBackground({
         muted
         loop={!isDual && !isBoomerang}
         playsInline
-        autoPlay={!startOnArrival}
+        autoPlay={!startOnArrival && !paused}
         preload="auto"
         disablePictureInPicture
         disableRemotePlayback
