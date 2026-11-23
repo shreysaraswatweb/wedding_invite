@@ -21,13 +21,13 @@ export type StageLayout = {
 };
 
 export function buildStageLayout(dayIds: string[]): StageLayout {
-  const { scrollDistanceVh, programmeScrollVh, sceneTransitionVh, venueHoldVh, rsvpHoldVh } =
+  const { scrollDistanceVh, programmeScrollVh, sceneTransitionVh, rsvpHoldVh } =
     invitation.motion;
   const holds = [
     { id: "cinema", length: scrollDistanceVh },
     ...dayIds.map((id) => ({ id: `day-${id}`, length: programmeScrollVh })),
-    { id: "venue", length: venueHoldVh },
     { id: "rsvp", length: rsvpHoldVh },
+    { id: "warm-regards", length: rsvpHoldVh },
   ];
 
   const scenes: StageLayout["scenes"] = [];

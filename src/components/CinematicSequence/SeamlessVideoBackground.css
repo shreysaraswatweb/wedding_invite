@@ -8,6 +8,41 @@
   background: #141013;
 }
 
+.seamless-video--ambient-white {
+  background: #ffffff;
+}
+
+.seamless-video__ambient {
+  position: absolute;
+  inset: -15%;
+  width: 130%;
+  height: 130%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(52px) saturate(1.1) brightness(1.25);
+  transform: scale(1.12);
+  pointer-events: none;
+  opacity: 0.45;
+  z-index: 1;
+  will-change: transform;
+}
+
+.seamless-video__ambient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.98) 18%,
+    rgba(255, 255, 255, 0.75) 40%,
+    rgba(255, 255, 255, 0.75) 60%,
+    rgba(255, 255, 255, 0.98) 82%,
+    #ffffff 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
 .seamless-video__media {
   position: absolute;
   inset: 0;
@@ -20,6 +55,7 @@
   filter: contrast(1.16) saturate(1.12) brightness(0.97);
   image-rendering: -webkit-optimize-contrast;
   image-rendering: high-quality;
+  z-index: 2;
 }
 
 .seamless-video__canvas {

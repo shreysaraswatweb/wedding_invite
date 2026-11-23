@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import "./SeamlessVideoBackground.css";
+import { onArrival } from "../../stage/arrival";
+import { STAGE_STEPS } from "../../stage/stageSteps";
 
 type SeamlessVideoBackgroundProps = {
   src: string;
@@ -13,13 +15,18 @@ type SeamlessVideoBackgroundProps = {
   boomerangEnd?: number;
   /** Callback fired the first time the full video completes its full duration */
   onInitialComplete?: () => void;
+  /** When true, renders a zoomed, heavily blurred ambient motion background to fill any letterbox/pillarbox space */
+  ambient?: boolean;
+  /** When set, delays starting video playback until this stage step is arrived at */
+  startOnArrival?: string;
 };
 
 /**
  * High-definition video background.
- * - Supports Boomerang Loop: plays 0s -> 19s, then boomerangs 19s -> 16.9s -> 19s -> 16.9s continuously.
+ * - Supports Boomerang Loop: plays 0s -> end, then boomerangs last seconds continuously.
  * - Supports Dual-player A/B crossfading for clips requiring seamless loop crossfades.
  * - Supports Single hardware-accelerated stream with native loop.
+ * - Supports Ambient Mode: blurred, zoomed dynamic backdrop filling all screen ratios without letterboxing.
  */
 export function SeamlessVideoBackground({
   src,
@@ -30,10 +37,13 @@ export function SeamlessVideoBackground({
   boomerangStart,
   boomerangEnd,
   onInitialComplete,
+  ambient = false,
+  startOnArrival,
 }: SeamlessVideoBackgroundProps) {
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ambientRef = useRef<HTMLVideoElement>(null);
 
   const onRenderedRef = useRef(onVideoRendered);
   const onInitialCompleteRef = useRef(onInitialComplete);
@@ -86,13 +96,6 @@ export function SeamlessVideoBackground({
       vid.addEventListener("canplay", notifyRendered, { once: true });
     }
 
-    if (active) {
-      vid.currentTime = 0;
-      vid.play().then(() => notifyRendered()).catch(() => {});
-    } else {
-      vid.pause();
-    }
-
     const startBoomerangLoop = () => {
       if (isBoomerangRunning) return;
       isBoomerangRunning = true;
@@ -100,7 +103,7 @@ export function SeamlessVideoBackground({
       const activeFrames = frames.filter(Boolean);
       const ctx = canvas.getContext("2d");
       if (!ctx || activeFrames.length < 5) {
-        // Fallback: continuous video loop between 16.9.9s and 19s without blanking screen
+        // Fallback: continuous video loop between bStart and bEnd without blanking screen
         const onFallbackTimeUpdate = () => {
           if (!active) return;
           if (vid.currentTime >= bEnd) {
@@ -126,7 +129,7 @@ export function SeamlessVideoBackground({
       canvas.style.display = "block";
 
       let frameIdx = activeFrames.length - 1;
-      let dir = -1; // Reverse first: 19s -> 16.9s
+      let dir = -1; // Reverse first: end -> start
       let lastTime = performance.now();
       const targetInterval = 1000 / 30; // 30 fps
 
@@ -146,10 +149,10 @@ export function SeamlessVideoBackground({
           frameIdx += dir;
           if (frameIdx <= 0) {
             frameIdx = 0;
-            dir = 1; // 16.9s -> 19s (forward)
+            dir = 1; // forward
           } else if (frameIdx >= activeFrames.length - 1) {
             frameIdx = activeFrames.length - 1;
-            dir = -1; // 19s -> 16.9s (reverse)
+            dir = -1; // reverse
           }
         }
 
@@ -166,7 +169,7 @@ export function SeamlessVideoBackground({
       // Pause the forward video
       vid.pause();
 
-      // Trigger the choreographed Logo & Names reveal!
+      // Trigger the choreographed reveal if registered
       onInitialCompleteRef.current?.();
 
       // Give 100ms for in-flight frame promises to resolve into the array, then launch boomerang
@@ -175,7 +178,7 @@ export function SeamlessVideoBackground({
       }, 100);
     };
 
-    // Frame capture during forward playback between 16.9s and 19s
+    // Frame capture during forward playback between bStart and bEnd
     let lastCaptureTime = 0;
     const captureLoop = () => {
       if (hasCompletedFirstRun) return;
@@ -210,10 +213,75 @@ export function SeamlessVideoBackground({
       }
     };
 
-    if ("requestVideoFrameCallback" in vid) {
-      (vid as any).requestVideoFrameCallback(captureLoop);
+    const startForwardPlayback = () => {
+      cancelAnimationFrame(animId);
+      hasCompletedFirstRun = false;
+      isBoomerangRunning = false;
+      frames.filter(Boolean).forEach((bmp) => {
+        try {
+          bmp.close();
+        } catch {
+          // Ignore close error on unmount or reset
+        }
+      });
+      frames.length = 0;
+      frameSeq = 0;
+      canvas.style.display = "none";
+      vid.style.opacity = "1";
+
+      vid.currentTime = 0;
+      vid.play().then(() => notifyRendered()).catch(() => {});
+      if (ambientRef.current) {
+        ambientRef.current.currentTime = 0;
+        ambientRef.current.play().catch(() => {});
+      }
+
+      lastCaptureTime = 0;
+      if ("requestVideoFrameCallback" in vid) {
+        (vid as any).requestVideoFrameCallback(captureLoop);
+      } else {
+        animId = requestAnimationFrame(captureLoop);
+      }
+    };
+
+    const pausePlayback = () => {
+      cancelAnimationFrame(animId);
+      vid.pause();
+      if (ambientRef.current) {
+        ambientRef.current.pause();
+      }
+      isBoomerangRunning = false;
+      canvas.style.display = "none";
+      vid.style.opacity = "1";
+    };
+
+    let unsubArrival: (() => void) | undefined;
+    let unsubOthers: (() => void)[] = [];
+
+    if (startOnArrival) {
+      // Hold video paused at 0 until arrival at the target step
+      vid.pause();
+      vid.currentTime = 0;
+      if (ambientRef.current) {
+        ambientRef.current.pause();
+        ambientRef.current.currentTime = 0;
+      }
+
+      unsubArrival = onArrival(startOnArrival, () => {
+        startForwardPlayback();
+      });
+
+      unsubOthers = STAGE_STEPS.filter((s) => s.id !== startOnArrival).map((s) =>
+        onArrival(s.id, () => {
+          pausePlayback();
+        })
+      );
     } else {
-      animId = requestAnimationFrame(captureLoop);
+      if (active) {
+        startForwardPlayback();
+      } else {
+        pausePlayback();
+      }
     }
 
     const onTimeUpdate = () => {
@@ -240,9 +308,17 @@ export function SeamlessVideoBackground({
       vid.removeEventListener("timeupdate", onTimeUpdate);
       vid.removeEventListener("ended", handleFirstRunComplete);
       vid.pause();
-      frames.filter(Boolean).forEach((bmp) => bmp.close());
+      frames.filter(Boolean).forEach((bmp) => {
+        try {
+          bmp.close();
+        } catch {
+          // Ignore close error on unmount or reset
+        }
+      });
+      unsubArrival?.();
+      unsubOthers.forEach((u) => u());
     };
-  }, [active, isBoomerang, boomerangStart, boomerangEnd]);
+  }, [active, isBoomerang, boomerangStart, boomerangEnd, startOnArrival]);
 
   // -------------------------------------------------------------
   // STANDARD PLAYBACK MODE (Single Player or Dual A/B Crossfade)
@@ -387,15 +463,93 @@ export function SeamlessVideoBackground({
     };
   }, [active, crossfadeDuration, isBoomerang, isDual, src]);
 
+  // -------------------------------------------------------------
+  // AMBIENT BLUR BACKGROUND SYNCHRONIZATION
+  // -------------------------------------------------------------
+  useEffect(() => {
+    if (!ambient) return;
+    const ambVid = ambientRef.current;
+    if (!ambVid) return;
+
+    ambVid.muted = true;
+    ambVid.defaultMuted = true;
+    ambVid.volume = 0;
+
+    if (active && !startOnArrival) {
+      ambVid.play().catch(() => {});
+    } else {
+      ambVid.pause();
+    }
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        ambVid.pause();
+      } else if (active && !startOnArrival) {
+        ambVid.play().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    const vidA = videoARef.current;
+    const onVidPlay = () => {
+      ambVid.play().catch(() => {});
+    };
+    const onVidPause = () => {
+      ambVid.pause();
+    };
+    const onVidSeeked = () => {
+      if (vidA && Math.abs(ambVid.currentTime - vidA.currentTime) > 0.4) {
+        ambVid.currentTime = vidA.currentTime;
+      }
+    };
+
+    if (vidA) {
+      vidA.addEventListener("play", onVidPlay);
+      vidA.addEventListener("pause", onVidPause);
+      vidA.addEventListener("seeked", onVidSeeked);
+    }
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      if (vidA) {
+        vidA.removeEventListener("play", onVidPlay);
+        vidA.removeEventListener("pause", onVidPause);
+        vidA.removeEventListener("seeked", onVidSeeked);
+      }
+      ambVid.pause();
+    };
+  }, [active, ambient, src, startOnArrival]);
+
   return (
-    <div className={`seamless-video ${className}`.trim()} aria-hidden="true">
+    <div
+      className={`seamless-video ${ambient ? "seamless-video--has-ambient seamless-video--ambient-white" : ""} ${className}`.trim()}
+      aria-hidden="true"
+    >
+      {ambient && (
+        <>
+          <video
+            ref={ambientRef}
+            src={src}
+            muted
+            loop
+            playsInline
+            autoPlay={!startOnArrival}
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
+            aria-hidden="true"
+            className="seamless-video__ambient"
+          />
+          <div className="seamless-video__ambient-overlay" aria-hidden="true" />
+        </>
+      )}
       <video
         ref={videoARef}
         src={src}
         muted
         loop={!isDual && !isBoomerang}
         playsInline
-        autoPlay
+        autoPlay={!startOnArrival}
         preload="auto"
         disablePictureInPicture
         disableRemotePlayback

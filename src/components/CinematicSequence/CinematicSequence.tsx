@@ -125,28 +125,33 @@ export function CinematicSequence({
             crossfadeDuration={1.4}
           />
         </div>
-        {/* Page 4 (Video 3): 3.mp4 background */}
+        {/* Page 4 (Video 3): 3.mp4 background with ambient blurred fill */}
         <div className="scene-bg scene-bg--three">
           <SeamlessVideoBackground
             src={video3}
             active={active}
             crossfadeDuration={1.4}
+            ambient={true}
           />
         </div>
-        {/* Page 5 (Video 4): 4.mp4 background */}
+        {/* Page 5 (Video 4): 4.mp4 background with ambient blurred fill, start on arrival at 0s, boomerang last 1-2s */}
         <div className="scene-bg scene-bg--four">
           <SeamlessVideoBackground
             src={video4}
             active={active}
-            crossfadeDuration={1.4}
+            startOnArrival="ceremony-four"
+            boomerangStart={6.8}
+            boomerangEnd={8.45}
+            ambient={true}
           />
         </div>
-        {/* Page 6 (Video 5): 5.mp4 background */}
+        {/* Page 6 (Video 5): 5.mp4 background with ambient blurred fill */}
         <div className="scene-bg scene-bg--five">
           <SeamlessVideoBackground
             src={video5}
             active={active}
             crossfadeDuration={1.4}
+            ambient={true}
           />
         </div>
 
@@ -270,10 +275,96 @@ export function CinematicSequence({
                 href="https://maps.app.goo.gl/BYWBTCGawCotxKJ86"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Get direction to Haldi ceremony venue on Google Maps (opens in a new tab)"
+                aria-label="Get directions to Haldi ceremony venue on Google Maps (opens in a new tab)"
               >
                 <svg
                   className="scene-haldi__directions-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>GET DIRECTIONS</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Page 5: Wedding Ceremony with 4.mp4 background */}
+          <div
+            className="scene-copy scene-copy--four"
+            aria-label="Wedding Ceremony Invitation"
+          >
+            <div className="scene-wedding">
+              <h2 className="scene-wedding__title">Wedding</h2>
+              <p className="scene-wedding__date">1st January, 2027</p>
+              <div className="scene-wedding__divider" aria-hidden="true" />
+              <div className="scene-wedding__day">
+                <span>FRIDAY</span>
+                <span className="scene-wedding__at">AT</span>
+              </div>
+              <address className="scene-wedding__venue">
+                <span>QUEENS LAND CELEBRATION LAWN &amp;</span>
+                <span>BANQUET, NAGPUR</span>
+              </address>
+              <p className="scene-wedding__time">6:35 PM</p>
+              <a
+                className="scene-wedding__directions"
+                href="https://www.google.com/maps/search/?api=1&query=Queens+Land+Celebration+Lawn+%26+Banquet+Nagpur"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Get directions to Wedding ceremony venue on Google Maps (opens in a new tab)"
+              >
+                <svg
+                  className="scene-wedding__directions-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>GET DIRECTIONS</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Page 6: Reception with 5.mp4 background */}
+          <div
+            className="scene-copy scene-copy--five"
+            aria-label="Wedding Reception Invitation"
+          >
+            <div className="scene-reception">
+              <h2 className="scene-reception__title">Reception</h2>
+              <p className="scene-reception__date">3rd January, 2027</p>
+              <div className="scene-reception__divider" aria-hidden="true" />
+              <div className="scene-reception__day">
+                <span>SUNDAY</span>
+                <span className="scene-reception__at">AT</span>
+              </div>
+              <address className="scene-reception__venue">
+                <span>LAMBA CELEBRATION, KAMPTEE ROAD,</span>
+                <span>NAGPUR</span>
+              </address>
+              <p className="scene-reception__time">7:30 PM ONWARDS</p>
+              <a
+                className="scene-reception__directions"
+                href="https://www.google.com/maps/search/?api=1&query=Lamba+Celebration+Kamptee+Road+Nagpur"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Get direction to Reception venue on Google Maps (opens in a new tab)"
+              >
+                <svg
+                  className="scene-reception__directions-icon"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                   focusable="false"
@@ -286,22 +377,6 @@ export function CinematicSequence({
                 <span>Get Direction</span>
               </a>
             </div>
-          </div>
-
-          {/* Page 5: Ceremony 4 with 4.mp4 background */}
-          <div
-            className="scene-copy scene-copy--four"
-            aria-label="Wedding Celebration"
-          >
-            {/* Copy container for 4.mp4 */}
-          </div>
-
-          {/* Page 6: Ceremony 5 with 5.mp4 background */}
-          <div
-            className="scene-copy scene-copy--five"
-            aria-label="Wedding Ceremony"
-          >
-            {/* Copy container for 5.mp4 */}
           </div>
         </div>
       </div>

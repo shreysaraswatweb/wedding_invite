@@ -78,10 +78,8 @@ export function useStageTransitions({
 
     // DOM layer references
     const cinemaEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="cinema"]');
-    const day11El = stageEl.querySelector<HTMLElement>('[data-stage-scene="day-dec-11"]');
-    const day12El = stageEl.querySelector<HTMLElement>('[data-stage-scene="day-dec-12"]');
-    const venueEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="venue"]');
     const rsvpEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="rsvp"]');
+    const warmRegardsEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="warm-regards"]');
 
     const heroEl = cinemaEl?.querySelector<HTMLElement>(".scene-hero");
     const bgCard = cinemaEl?.querySelector<HTMLElement>(".scene-bg--card");
@@ -102,10 +100,8 @@ export function useStageTransitions({
       3: cinemaEl,
       4: cinemaEl,
       5: cinemaEl,
-      6: day11El,
-      7: day12El,
-      8: venueEl,
-      9: rsvpEl,
+      6: rsvpEl,
+      7: warmRegardsEl,
     };
 
     const fromLayer = layerMap[from];
@@ -118,7 +114,7 @@ export function useStageTransitions({
       onComplete: () => {
         isTransitioningRef.current = false;
         // Ensure non-active layers are strictly hidden and inert
-        const allLayers = [cinemaEl, day11El, day12El, venueEl, rsvpEl];
+        const allLayers = [cinemaEl, rsvpEl, warmRegardsEl];
         allLayers.forEach((layer) => {
           if (!layer) return;
           const isCurrent = layer === toLayer;
@@ -368,12 +364,10 @@ export function useStageTransitions({
 
     // Initialize layers: Step 0 (Hero: Lakshay & Prerna) is active, all others hidden
     const cinemaEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="cinema"]');
-    const day11El = stageEl.querySelector<HTMLElement>('[data-stage-scene="day-dec-11"]');
-    const day12El = stageEl.querySelector<HTMLElement>('[data-stage-scene="day-dec-12"]');
-    const venueEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="venue"]');
     const rsvpEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="rsvp"]');
+    const warmRegardsEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="warm-regards"]');
 
-    const nonCinema = [day11El, day12El, venueEl, rsvpEl];
+    const nonCinema = [rsvpEl, warmRegardsEl];
     nonCinema.forEach((layer) => {
       if (layer) gsap.set(layer, { autoAlpha: 0, opacity: 0, pointerEvents: "none" });
     });

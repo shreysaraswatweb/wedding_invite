@@ -3,8 +3,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CinematicSequence } from "./components/CinematicSequence/CinematicSequence";
 import { Stage } from "./components/Stage/Stage";
 import { Programmes } from "./components/Programmes/Programmes";
-import { Venue } from "./components/Venue/Venue";
 import { Rsvp } from "./components/Rsvp/Rsvp";
+import { WarmRegards } from "./components/WarmRegards/WarmRegards";
 import { invitation } from "./config/invitation";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
 import {
@@ -248,8 +248,8 @@ export default function App() {
           stage={stageRef}
         />
         <Programmes active={true} reducedMotion={reducedMotion} stage={stageRef} />
-        <Venue active={true} reducedMotion={reducedMotion} stage={stageRef} />
         <Rsvp active={true} reducedMotion={reducedMotion} stage={stageRef} />
+        <WarmRegards active={true} reducedMotion={reducedMotion} stage={stageRef} />
       </Stage>
     </main>
   );

@@ -243,32 +243,7 @@ export const invitation: InvitationConfig = {
     surround: "/images/programme-soft.jpg",
     artAspect: 576 / 1024,
     copyArea: { top: 23, right: 17, bottom: 38.5, left: 17 },
-    days: [
-      {
-        id: "dec-11",
-        date: "11 December",
-        events: [
-          { id: "sagai", label: "Sagai & Ring Ceremony", time: "4:00 PM", dateTime: "16:00" },
-          { id: "mehndi", label: "Mehndi Ceremony", time: "6:00 PM", dateTime: "18:00" },
-          { id: "dinner", label: "Dinner", time: "8:00 PM", dateTime: "20:00" },
-        ],
-      },
-      {
-        id: "dec-12",
-        date: "12 December",
-        kicker: "The Celebrations Continue",
-        // 12 December artwork (576×945): open floral sky above the couple and domes.
-        background: "/images/haldi.jpg",
-        surround: "/images/haldi-soft.jpg",
-        artAspect: 576 / 945,
-        copyArea: { top: 7, right: 11, bottom: 51, left: 11 },
-        events: [
-          { id: "haldi", label: "Haldi Ceremony", time: "10:00 AM", dateTime: "10:00" },
-          { id: "sehra-bandi", label: "Sehra Bandi", time: "8:00 PM", dateTime: "20:00" },
-          { id: "dinner", label: "Dinner", time: "8:30 PM", dateTime: "20:30" },
-        ],
-      },
-    ],
+    days: [],
   },
   venue: {
     heading: "The Wedding Venue",

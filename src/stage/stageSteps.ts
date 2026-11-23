@@ -5,10 +5,8 @@ export type StageStepId =
   | "celebrations"
   | "ceremony-four"
   | "ceremony-five"
-  | "day-dec-11"
-  | "day-dec-12"
-  | "venue"
-  | "rsvp";
+  | "rsvp"
+  | "warm-regards";
 
 export type StageStep = {
   id: StageStepId;
@@ -21,11 +19,9 @@ export const STAGE_STEPS: StageStep[] = [
   { id: "invitation", sceneId: "cinema", label: "Wedding Invitation" },
   { id: "countdown", sceneId: "cinema", label: "Countdown" },
   { id: "celebrations", sceneId: "cinema", label: "Haldi Ceremony" },
-  { id: "ceremony-four", sceneId: "cinema", label: "Celebration" },
-  { id: "ceremony-five", sceneId: "cinema", label: "Ceremony" },
-  { id: "day-dec-11", sceneId: "day-dec-11", label: "11 December" },
-  { id: "day-dec-12", sceneId: "day-dec-12", label: "12 December" },
-  { id: "venue", sceneId: "venue", label: "The Wedding Venue" },
+  { id: "ceremony-four", sceneId: "cinema", label: "Wedding Ceremony" },
+  { id: "ceremony-five", sceneId: "cinema", label: "Reception" },
   { id: "rsvp", sceneId: "rsvp", label: "RSVP" },
+  { id: "warm-regards", sceneId: "warm-regards", label: "Warm Regards" },
 ];
 

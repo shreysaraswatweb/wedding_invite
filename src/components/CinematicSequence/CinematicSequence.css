@@ -63,7 +63,7 @@
   overflow: hidden;
   pointer-events: none;
   will-change: opacity;
-  background: #fbf9f4;
+  background: #ffffff;
 }
 
 .scene-bg--three .seamless-video,
@@ -71,10 +71,11 @@
 .scene-bg--five .seamless-video {
   position: absolute;
   inset: 0;
-  margin: auto;
-  width: min(100vw, calc(100dvh * 9 / 16));
-  height: min(100dvh, calc(100vw * 16 / 9));
-  background: transparent;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #ffffff;
 }
 
 .scene-bg--three .seamless-video__media,
@@ -83,10 +84,37 @@
 .scene-bg--four .seamless-video__canvas,
 .scene-bg--five .seamless-video__media,
 .scene-bg--five .seamless-video__canvas {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  height: min(100dvh, calc(100vw * 16 / 9));
   object-fit: contain;
   object-position: center;
+  z-index: 2;
+  box-shadow: none;
+  mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 2.5%,
+    rgba(0, 0, 0, 0.8) 4.5%,
+    #000 7.5%,
+    #000 92.5%,
+    rgba(0, 0, 0, 0.8) 95.5%,
+    rgba(0, 0, 0, 0.4) 97.5%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 2.5%,
+    rgba(0, 0, 0, 0.8) 4.5%,
+    #000 7.5%,
+    #000 92.5%,
+    rgba(0, 0, 0, 0.8) 95.5%,
+    rgba(0, 0, 0, 0.4) 97.5%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 /* Groups both scenes' text so the stage can fade it as one; above the couple. */
@@ -785,38 +813,38 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  margin: clamp(0.45rem, 1.3dvh, 0.85rem) auto 0;
-  padding: clamp(0.38rem, 1dvh, 0.55rem) clamp(1.1rem, 3.8vw, 1.55rem);
-  border: 1px solid rgba(148, 38, 48, 0.5);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  gap: 0.55rem;
+  margin: clamp(0.48rem, 1.3dvh, 0.85rem) auto 0;
+  padding: clamp(0.36rem, 0.95dvh, 0.48rem) clamp(1.4rem, 4.2vw, 2.1rem);
+  border: 1.2px solid rgba(200, 157, 89, 0.88);
+  border-radius: 9999px;
+  background: rgba(255, 253, 247, 0.72);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
-  font-size: clamp(0.65rem, 2.1vw, 0.85rem);
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-size: clamp(0.68rem, 2.1vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #942630;
-  box-shadow: 0 3px 12px rgba(148, 38, 48, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: #7c2e27;
+  box-shadow: 0 2px 10px rgba(200, 157, 89, 0.14), 0 1px 3px rgba(0, 0, 0, 0.04);
   opacity: 0;
   pointer-events: auto;
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
   will-change: opacity, transform;
 }
 
 .scene-haldi__directions:hover {
-  transform: scale(1.04);
-  background: rgba(255, 255, 255, 0.98);
-  border-color: #942630;
-  color: #781a23;
-  box-shadow: 0 4px 16px rgba(148, 38, 48, 0.25);
+  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: #caa160;
+  color: #5e1f1a;
+  box-shadow: 0 4px 16px rgba(200, 157, 89, 0.26);
 }
 
 .scene-haldi__directions:active {
@@ -824,15 +852,17 @@
 }
 
 .scene-haldi__directions:focus-visible {
-  outline: 2px solid #942630;
+  outline: 2px solid #caa160;
   outline-offset: 3px;
 }
 
 .scene-haldi__directions-icon {
-  width: clamp(0.85rem, 2.5vw, 1.05rem);
-  height: clamp(0.85rem, 2.5vw, 1.05rem);
+  width: clamp(0.78rem, 2.2vw, 0.92rem);
+  height: clamp(0.78rem, 2.2vw, 0.92rem);
   flex-shrink: 0;
-  color: #ea580c;
+  color: #caa160;
+  stroke: #caa160;
+  fill: none;
 }
 
 @media (orientation: landscape) and (max-height: 600px) {
@@ -877,6 +907,435 @@
   }
 
   .scene-haldi__directions-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   Page 5: Wedding Ceremony Invitation Text (Queens Land Celebration Lawn)
+   ========================================================================== */
+.scene-copy--four {
+  padding-top: max(env(safe-area-inset-top), clamp(4.6rem, 15.5dvh, 8.5rem));
+}
+
+.scene-wedding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.scene-wedding__title {
+  margin: 0 auto;
+  font-family: var(--font-wedding-script, "Alex Brush", "Allura", "Great Vibes", cursive);
+  font-weight: 400;
+  font-size: clamp(2.7rem, 8.8vw, 4.3rem);
+  line-height: 1.0;
+  color: #8c1d2e;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 14px rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__date {
+  margin: clamp(0.1rem, 0.4dvh, 0.25rem) auto 0;
+  font-family: var(--font-wedding-display, "Playfair Display", "Cormorant Garamond", serif);
+  font-size: clamp(1.12rem, 3.7vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: #be6858;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 10px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__divider {
+  display: block;
+  width: clamp(7.5rem, 30vw, 11rem);
+  height: 1px;
+  margin: clamp(0.2rem, 0.65dvh, 0.38rem) auto;
+  background: linear-gradient(90deg, transparent, #e58d7e 22%, #e58d7e 78%, transparent);
+  transform-origin: center center;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__day {
+  margin: clamp(0.08rem, 0.35dvh, 0.2rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.68rem, 2.2vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #365335;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__at {
+  font-size: clamp(0.62rem, 1.9vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.scene-wedding__venue {
+  margin: clamp(0.12rem, 0.5dvh, 0.28rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-style: normal;
+  gap: 0.1rem;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.62rem, 2.1vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: clamp(0.05em, 0.16vw, 0.09em);
+  line-height: 1.35;
+  text-transform: uppercase;
+  color: #365335;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  max-width: min(90vw, 24rem);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__time {
+  margin: clamp(0.12rem, 0.5dvh, 0.28rem) auto 0;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.68rem, 2.2vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #365335;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__directions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: clamp(0.38rem, 1dvh, 0.65rem) auto 0;
+  padding: clamp(0.34rem, 0.85dvh, 0.44rem) clamp(1.25rem, 3.8vw, 1.85rem);
+  border: 1.2px solid rgba(200, 157, 89, 0.88);
+  border-radius: 9999px;
+  background: rgba(255, 253, 247, 0.76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.66rem, 2vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #365335;
+  box-shadow: 0 2px 10px rgba(67, 99, 66, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+  will-change: opacity, transform;
+}
+
+.scene-wedding__directions:hover {
+  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #caa160;
+  color: #243b23;
+  box-shadow: 0 4px 16px rgba(200, 157, 89, 0.24);
+}
+
+.scene-wedding__directions:active {
+  transform: scale(0.97);
+}
+
+.scene-wedding__directions:focus-visible {
+  outline: 2px solid #caa160;
+  outline-offset: 3px;
+}
+
+.scene-wedding__directions-icon {
+  width: clamp(0.76rem, 2.1vw, 0.9rem);
+  height: clamp(0.76rem, 2.1vw, 0.9rem);
+  flex-shrink: 0;
+  color: #caa160;
+  stroke: #caa160;
+  fill: none;
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .scene-copy--four {
+    padding-top: max(env(safe-area-inset-top), 1%);
+  }
+
+  .scene-wedding__title {
+    font-size: clamp(1.8rem, 8.5vh, 2.8rem);
+  }
+
+  .scene-wedding__date {
+    font-size: clamp(0.9rem, 4.2vh, 1.25rem);
+    margin-top: 0.1rem;
+  }
+
+  .scene-wedding__divider {
+    width: clamp(6.5rem, 26vh, 9.5rem);
+    margin-top: 0.12rem;
+  }
+
+  .scene-wedding__day {
+    font-size: clamp(0.6rem, 2.8vh, 0.8rem);
+    margin-top: 0.1rem;
+  }
+
+  .scene-wedding__venue {
+    font-size: clamp(0.55rem, 2.6vh, 0.75rem);
+    margin-top: 0.12rem;
+    line-height: 1.3;
+  }
+
+  .scene-wedding__time {
+    font-size: clamp(0.62rem, 2.9vh, 0.82rem);
+    margin-top: 0.12rem;
+  }
+
+  .scene-wedding__directions {
+    margin-top: 0.18rem;
+    padding: 0.28rem 0.85rem;
+    font-size: clamp(0.55rem, 2.4vh, 0.72rem);
+  }
+
+  .scene-wedding__directions-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   Page 6: Reception Invitation Text (Lamba Celebration)
+   ========================================================================== */
+.scene-copy--five {
+  padding-top: max(env(safe-area-inset-top), clamp(1.4rem, 4.2dvh, 3.2rem));
+}
+
+.scene-reception {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.scene-reception__title {
+  margin: 0 auto;
+  font-family: var(--font-wedding-script, "Alex Brush", "Allura", "Great Vibes", cursive);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 11.5vw, 5.6rem);
+  line-height: 1.05;
+  color: #60865a;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 14px rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-reception__date {
+  margin: clamp(0.12rem, 0.65dvh, 0.35rem) auto 0;
+  font-family: var(--font-wedding-display, "Playfair Display", "Cormorant Garamond", serif);
+  font-size: clamp(1.35rem, 4.6vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.18;
+  color: #778f71;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 10px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-reception__divider {
+  display: block;
+  width: clamp(8.5rem, 36vw, 13.5rem);
+  height: 1px;
+  margin: clamp(0.32rem, 1dvh, 0.55rem) auto;
+  background: linear-gradient(90deg, transparent, #8fa789 22%, #8fa789 78%, transparent);
+  transform-origin: center center;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-reception__day {
+  margin: clamp(0.12rem, 0.65dvh, 0.32rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.16rem;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.76rem, 2.6vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: #d47c1b;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-reception__at {
+  font-size: clamp(0.68rem, 2.2vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.scene-reception__venue {
+  margin: clamp(0.2rem, 0.8dvh, 0.42rem) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-style: normal;
+  gap: 0.16rem;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.7rem, 2.4vw, 1.02rem);
+  font-weight: 700;
+  letter-spacing: clamp(0.06em, 0.18vw, 0.1em);
+  line-height: 1.45;
+  text-transform: uppercase;
+  color: #d47c1b;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  max-width: min(90vw, 26rem);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-reception__time {
+  margin: clamp(0.2rem, 0.8dvh, 0.42rem) auto 0;
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.78rem, 2.6vw, 1.12rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: #d47c1b;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 1px 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.scene-reception__directions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: clamp(0.45rem, 1.3dvh, 0.85rem) auto 0;
+  padding: clamp(0.38rem, 1dvh, 0.55rem) clamp(1.1rem, 3.8vw, 1.55rem);
+  border: 1px solid rgba(212, 124, 27, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
+  font-size: clamp(0.65rem, 2.1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #d47c1b;
+  box-shadow: 0 3px 12px rgba(212, 124, 27, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  will-change: opacity, transform;
+}
+
+.scene-reception__directions:hover {
+  transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #d47c1b;
+  color: #a85f0f;
+  box-shadow: 0 4px 16px rgba(212, 124, 27, 0.25);
+}
+
+.scene-reception__directions:active {
+  transform: scale(0.97);
+}
+
+.scene-reception__directions:focus-visible {
+  outline: 2px solid #d47c1b;
+  outline-offset: 3px;
+}
+
+.scene-reception__directions-icon {
+  width: clamp(0.85rem, 2.5vw, 1.05rem);
+  height: clamp(0.85rem, 2.5vw, 1.05rem);
+  flex-shrink: 0;
+  color: #60865a;
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .scene-copy--five {
+    padding-top: max(env(safe-area-inset-top), 1%);
+  }
+
+  .scene-reception {
+    margin-top: 0;
+  }
+
+  .scene-reception__title {
+    font-size: clamp(1.8rem, 8.5vh, 2.8rem);
+  }
+
+  .scene-reception__date {
+    font-size: clamp(0.9rem, 4.2vh, 1.25rem);
+    margin-top: 0.1rem;
+  }
+
+  .scene-reception__divider {
+    width: clamp(6.5rem, 26vh, 9.5rem);
+    margin-top: 0.12rem;
+  }
+
+  .scene-reception__day {
+    font-size: clamp(0.6rem, 2.8vh, 0.8rem);
+    margin-top: 0.1rem;
+  }
+
+  .scene-reception__venue {
+    font-size: clamp(0.55rem, 2.6vh, 0.75rem);
+    margin-top: 0.12rem;
+    line-height: 1.3;
+  }
+
+  .scene-reception__time {
+    font-size: clamp(0.62rem, 2.9vh, 0.82rem);
+    margin-top: 0.12rem;
+  }
+
+  .scene-reception__directions {
+    margin-top: 0.18rem;
+    padding: 0.28rem 0.85rem;
+    font-size: clamp(0.55rem, 2.4vh, 0.72rem);
+  }
+
+  .scene-reception__directions-icon {
     width: 0.75rem;
     height: 0.75rem;
   }

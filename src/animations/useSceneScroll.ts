@@ -32,6 +32,8 @@ export function useSceneScroll({
   const invitationRevealRef = useRef<gsap.core.Timeline | null>(null);
   const countdownRevealRef = useRef<gsap.core.Timeline | null>(null);
   const haldiRevealRef = useRef<gsap.core.Timeline | null>(null);
+  const weddingRevealRef = useRef<gsap.core.Timeline | null>(null);
+  const receptionRevealRef = useRef<gsap.core.Timeline | null>(null);
   const videoCompletedRef = useRef(videoCompleted);
 
   useEffect(() => {
@@ -73,6 +75,24 @@ export function useSceneScroll({
       const haldiTime = haldiEl?.querySelector<HTMLElement>(".scene-haldi__time, .scene-haldi__art--time");
       const haldiDirections = haldiEl?.querySelector<HTMLElement>(".scene-haldi__directions");
 
+      const weddingEl = copyFour?.querySelector<HTMLElement>(".scene-wedding");
+      const weddingTitle = weddingEl?.querySelector<HTMLElement>(".scene-wedding__title");
+      const weddingDate = weddingEl?.querySelector<HTMLElement>(".scene-wedding__date");
+      const weddingDivider = weddingEl?.querySelector<HTMLElement>(".scene-wedding__divider");
+      const weddingDay = weddingEl?.querySelector<HTMLElement>(".scene-wedding__day");
+      const weddingVenue = weddingEl?.querySelector<HTMLElement>(".scene-wedding__venue");
+      const weddingTime = weddingEl?.querySelector<HTMLElement>(".scene-wedding__time");
+      const weddingDirections = weddingEl?.querySelector<HTMLElement>(".scene-wedding__directions");
+
+      const receptionEl = copyFive?.querySelector<HTMLElement>(".scene-reception");
+      const receptionTitle = receptionEl?.querySelector<HTMLElement>(".scene-reception__title");
+      const receptionDate = receptionEl?.querySelector<HTMLElement>(".scene-reception__date");
+      const receptionDivider = receptionEl?.querySelector<HTMLElement>(".scene-reception__divider");
+      const receptionDay = receptionEl?.querySelector<HTMLElement>(".scene-reception__day");
+      const receptionVenue = receptionEl?.querySelector<HTMLElement>(".scene-reception__venue");
+      const receptionTime = receptionEl?.querySelector<HTMLElement>(".scene-reception__time");
+      const receptionDirections = receptionEl?.querySelector<HTMLElement>(".scene-reception__directions");
+
       // Initial state: Step 0 (Hero page with Video 1 active, Page 2 & Countdown hidden)
       gsap.set(bgOne, { opacity: 1 });
       if (bgCard) gsap.set(bgCard, { opacity: 0 });
@@ -102,6 +122,22 @@ export function useSceneScroll({
       if (haldiVenue) gsap.set(haldiVenue, { opacity: 0, y: 14, scale: 0.97 });
       if (haldiTime) gsap.set(haldiTime, { opacity: 0, y: 10 });
       if (haldiDirections) gsap.set(haldiDirections, { opacity: 0, y: 10, scale: 0.95 });
+
+      if (weddingTitle) gsap.set(weddingTitle, { opacity: 0, y: 16, scale: 0.94 });
+      if (weddingDate) gsap.set(weddingDate, { opacity: 0, y: 12 });
+      if (weddingDivider) gsap.set(weddingDivider, { opacity: 0, scaleX: 0 });
+      if (weddingDay) gsap.set(weddingDay, { opacity: 0, y: 10 });
+      if (weddingVenue) gsap.set(weddingVenue, { opacity: 0, y: 14, scale: 0.97 });
+      if (weddingTime) gsap.set(weddingTime, { opacity: 0, y: 10 });
+      if (weddingDirections) gsap.set(weddingDirections, { opacity: 0, y: 10, scale: 0.95 });
+
+      if (receptionTitle) gsap.set(receptionTitle, { opacity: 0, y: 16, scale: 0.94 });
+      if (receptionDate) gsap.set(receptionDate, { opacity: 0, y: 12 });
+      if (receptionDivider) gsap.set(receptionDivider, { opacity: 0, scaleX: 0 });
+      if (receptionDay) gsap.set(receptionDay, { opacity: 0, y: 10 });
+      if (receptionVenue) gsap.set(receptionVenue, { opacity: 0, y: 14, scale: 0.97 });
+      if (receptionTime) gsap.set(receptionTime, { opacity: 0, y: 10 });
+      if (receptionDirections) gsap.set(receptionDirections, { opacity: 0, y: 10, scale: 0.95 });
 
       // Distinct 3-Stage Reveal Timeline:
       // Stage 1: Logo revealed all by itself, then settles.
@@ -407,6 +443,170 @@ export function useSceneScroll({
         }
       }
 
+      // --- Page 5: Wedding Ceremony Reveal ---
+      const weddingReveal = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+      weddingRevealRef.current = weddingReveal;
+
+      if (!reducedMotion) {
+        if (weddingTitle) {
+          weddingReveal.fromTo(
+            weddingTitle,
+            { opacity: 0, y: 16, scale: 0.94 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power2.out" },
+            4.0,
+          );
+        }
+        if (weddingDate) {
+          weddingReveal.fromTo(
+            weddingDate,
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
+            "+=0.2",
+          );
+        }
+        if (weddingDivider) {
+          weddingReveal.fromTo(
+            weddingDivider,
+            { opacity: 0, scaleX: 0 },
+            { opacity: 1, scaleX: 1, duration: 0.6, ease: "power2.inOut" },
+            "-=0.35",
+          );
+        }
+        if (weddingDay) {
+          weddingReveal.fromTo(
+            weddingDay,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.2",
+          );
+        }
+        if (weddingVenue) {
+          weddingReveal.fromTo(
+            weddingVenue,
+            { opacity: 0, y: 14, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            "+=0.15",
+          );
+        }
+        if (weddingTime) {
+          weddingReveal.fromTo(
+            weddingTime,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" },
+            "-=0.25",
+          );
+        }
+        if (weddingDirections) {
+          weddingReveal.fromTo(
+            weddingDirections,
+            { opacity: 0, y: 10, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: "power2.out" },
+            "-=0.2",
+          );
+        }
+        weddingReveal.set(
+          [weddingTitle, weddingDate, weddingDivider, weddingDay, weddingVenue, weddingTime, weddingDirections].filter(Boolean),
+          { clearProps: "transform,filter" },
+        );
+      } else {
+        if (weddingTitle) {
+          weddingReveal.to(weddingTitle, { opacity: 1, duration: 0.4 }, 4.0);
+        }
+        const g1 = [weddingDate, weddingDivider].filter(Boolean) as HTMLElement[];
+        if (g1.length > 0) {
+          weddingReveal.to(g1, { opacity: 1, duration: 0.4 }, "+=0.2");
+        }
+        const g2 = [weddingDay, weddingVenue, weddingTime, weddingDirections].filter(Boolean) as HTMLElement[];
+        if (g2.length > 0) {
+          weddingReveal.to(g2, { opacity: 1, duration: 0.4 }, "+=0.2");
+        }
+      }
+
+      // --- Page 6: Reception Reveal ---
+      const receptionReveal = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+      receptionRevealRef.current = receptionReveal;
+
+      if (!reducedMotion) {
+        if (receptionTitle) {
+          receptionReveal.fromTo(
+            receptionTitle,
+            { opacity: 0, y: 16, scale: 0.94 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power2.out" },
+            0,
+          );
+        }
+        if (receptionDate) {
+          receptionReveal.fromTo(
+            receptionDate,
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
+            "+=0.2",
+          );
+        }
+        if (receptionDivider) {
+          receptionReveal.fromTo(
+            receptionDivider,
+            { opacity: 0, scaleX: 0 },
+            { opacity: 1, scaleX: 1, duration: 0.6, ease: "power2.inOut" },
+            "-=0.35",
+          );
+        }
+        if (receptionDay) {
+          receptionReveal.fromTo(
+            receptionDay,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.2",
+          );
+        }
+        if (receptionVenue) {
+          receptionReveal.fromTo(
+            receptionVenue,
+            { opacity: 0, y: 14, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            "+=0.15",
+          );
+        }
+        if (receptionTime) {
+          receptionReveal.fromTo(
+            receptionTime,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" },
+            "-=0.25",
+          );
+        }
+        if (receptionDirections) {
+          receptionReveal.fromTo(
+            receptionDirections,
+            { opacity: 0, y: 10, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: "power2.out" },
+            "-=0.2",
+          );
+        }
+        receptionReveal.set(
+          [receptionTitle, receptionDate, receptionDivider, receptionDay, receptionVenue, receptionTime, receptionDirections].filter(Boolean),
+          { clearProps: "transform,filter" },
+        );
+      } else {
+        if (receptionTitle) {
+          receptionReveal.to(receptionTitle, { opacity: 1, duration: 0.4 });
+        }
+        const g1 = [receptionDate, receptionDivider].filter(Boolean) as HTMLElement[];
+        if (g1.length > 0) {
+          receptionReveal.to(g1, { opacity: 1, duration: 0.4 }, "+=0.2");
+        }
+        const g2 = [receptionDay, receptionVenue, receptionTime, receptionDirections].filter(Boolean) as HTMLElement[];
+        if (g2.length > 0) {
+          receptionReveal.to(g2, { opacity: 1, duration: 0.4 }, "+=0.2");
+        }
+      }
+
       // Event listener for arriving back at the hero chapter (Page 1)
       const unsubHero = onArrival("hero", () => {
         if (namesRevealRef.current && videoCompletedRef.current) {
@@ -433,6 +633,7 @@ export function useSceneScroll({
       // Event listener for arriving at the celebrations / Haldi chapter (Page 4)
       const unsubCelebrations = onArrival("celebrations", () => {
         window.dispatchEvent(new Event("resize"));
+        weddingRevealRef.current?.pause(0);
         if (haldiRevealRef.current) {
           haldiRevealRef.current.restart();
         }
@@ -441,11 +642,18 @@ export function useSceneScroll({
       // Event listener for arriving at ceremony 4 (Page 5)
       const unsubCeremonyFour = onArrival("ceremony-four", () => {
         window.dispatchEvent(new Event("resize"));
+        if (weddingRevealRef.current) {
+          weddingRevealRef.current.restart();
+        }
       });
 
       // Event listener for arriving at ceremony 5 (Page 6)
       const unsubCeremonyFive = onArrival("ceremony-five", () => {
         window.dispatchEvent(new Event("resize"));
+        weddingRevealRef.current?.pause(0);
+        if (receptionRevealRef.current) {
+          receptionRevealRef.current.restart();
+        }
       });
 
       return () => {
@@ -457,6 +665,10 @@ export function useSceneScroll({
         countdownRevealRef.current = null;
         haldiReveal.kill();
         haldiRevealRef.current = null;
+        weddingReveal.kill();
+        weddingRevealRef.current = null;
+        receptionReveal.kill();
+        receptionRevealRef.current = null;
         unsubHero();
         unsubInvitation();
         unsubCountdown();
