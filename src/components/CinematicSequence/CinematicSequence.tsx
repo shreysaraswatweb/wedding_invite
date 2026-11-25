@@ -116,6 +116,7 @@ export function CinematicSequence({
           <GaneshaPrologue
             active={active}
             onComplete={handleGaneshaComplete}
+            background="/images/scene-1.jpg"
           />
         )}
 

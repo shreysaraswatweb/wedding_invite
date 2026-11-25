@@ -4,9 +4,14 @@ import "./GaneshaPrologue.css";
 type GaneshaPrologueProps = {
   active: boolean;
   onComplete: () => void;
+  background?: string;
 };
 
-export function GaneshaPrologue({ active, onComplete }: GaneshaPrologueProps) {
+export function GaneshaPrologue({
+  active,
+  onComplete,
+  background = "/images/scene-1.jpg",
+}: GaneshaPrologueProps) {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
@@ -44,7 +49,7 @@ export function GaneshaPrologue({ active, onComplete }: GaneshaPrologueProps) {
     >
       <div className="ganesha-prologue__backdrop" aria-hidden="true">
         <img
-          src="/images/ganesh-wallpaper.jpg"
+          src={background}
           alt=""
           className="ganesha-prologue__wallpaper"
           loading="eager"
@@ -53,11 +58,13 @@ export function GaneshaPrologue({ active, onComplete }: GaneshaPrologueProps) {
       </div>
 
       <div className="ganesha-prologue__card">
-        {/* Top: Shree Ganeshaya Namah */}
+        {/* Top: Shree Ganeshaya Namah with authentic two-tone saffron & vermillion styling */}
         <h2 className="ganesha-prologue__heading">
-          <span className="ganesha-prologue__danda" aria-hidden="true">॥</span>
-          <span className="ganesha-prologue__title">श्री गणेशाय नमः</span>
-          <span className="ganesha-prologue__danda" aria-hidden="true">॥</span>
+          <span className="ganesha-prologue__danda" aria-hidden="true">•॥</span>
+          <span className="ganesha-prologue__word ganesha-prologue__word--shree">श्री</span>
+          <span className="ganesha-prologue__word ganesha-prologue__word--ganeshaya">गणेशाय</span>
+          <span className="ganesha-prologue__word ganesha-prologue__word--namah">नमः</span>
+          <span className="ganesha-prologue__danda" aria-hidden="true">॥•</span>
         </h2>
 
         {/* Center: Divine Ganeshji Artwork */}
@@ -72,7 +79,7 @@ export function GaneshaPrologue({ active, onComplete }: GaneshaPrologueProps) {
           />
         </div>
 
-        {/* Bottom: Vakratunda Mahakaya Shloka */}
+        {/* Bottom: Vakratunda Mahakaya Shloka with authentic wedding calligraphy */}
         <div className="ganesha-prologue__shloka">
           <p className="ganesha-prologue__shloka-line">
             वक्रतुण्ड महाकाय सूर्यकोटि समप्रभः
