@@ -1,16 +1,18 @@
 .cinema {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
   width: 100%;
+  height: 100%;
 }
 
 .cinema__viewport {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  height: 100dvh;
   overflow: hidden;
-  background: #141013;
+  background: #181c20;
 }
 
 .scene-bg {
@@ -23,6 +25,7 @@
   z-index: 1;
   overflow: hidden;
   pointer-events: none;
+  background-color: #d6dac0;
 }
 
 .scene-bg--card {
@@ -32,25 +35,30 @@
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
-  background: #141013;
+  background: #d6dac0;
   will-change: opacity;
 }
 
 .scene-bg--card .scene-bg__image {
   position: absolute;
-  inset: 0;
+  inset: -2px 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% + 4px);
   object-fit: cover;
   object-position: center;
 }
 
 .scene-bg--two {
+  position: absolute;
+  inset: -4px 0;
+  width: 100%;
+  height: calc(100% + 8px);
   z-index: 3;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
   will-change: opacity;
+  background: #141022;
 }
 
 .scene-bg--three,
@@ -289,33 +297,35 @@
   width: min(100vw, calc(100vh * var(--art-aspect)));
   width: min(100vw, calc(100dvh * var(--art-aspect)));
   transform: translateX(-50%);
-  justify-content: stretch;
-  padding-top: max(env(safe-area-inset-top), 1rem);
+  justify-content: flex-start;
+  padding-top: max(env(safe-area-inset-top), clamp(0.75rem, 2.5dvh, 1.6rem));
   padding-bottom: max(env(safe-area-inset-bottom), 1rem);
   container-type: size;
   color: var(--ivory);
 }
 
 /*
- * Three rows with equal space above and below the countdown, so the countdown
- * sits at the true centre of the screen; the invitation line and scratch card
- * rest just above it.
+ * Stacked neatly at the top of the frame in the open fireworks sky,
+ * keeping the couple walking below completely clear and visible.
  */
 .scene-two__inner {
-  display: grid;
-  grid-template-rows: 1fr auto 1fr;
-  justify-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.scene-two__lead {
-  grid-row: 1;
-  align-self: end;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: min(3.2cqh, 1.5rem);
+  justify-content: flex-start;
+  width: 100%;
+  max-width: min(92vw, 24rem);
+  margin: 0 auto;
+  gap: clamp(0.35rem, 1dvh, 0.65rem);
+  box-sizing: border-box;
+}
+
+.scene-two__lead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0;
 }
 
 .scene-copy--framed .scene-kicker {
@@ -333,9 +343,9 @@
 }
 
 .scene-two__divider {
-  width: min(48cqw, 15rem);
-  margin: min(1.6cqh, 0.8rem) 0 min(2cqh, 1rem);
-  font-size: max(0.6rem, min(2.2cqw, 0.75rem));
+  width: min(44cqw, 11rem);
+  margin: min(1.2cqh, 0.35rem) 0 min(1.4cqh, 0.5rem);
+  font-size: max(0.55rem, min(2cqw, 0.7rem));
 }
 
 .scene-two__divider.ornament {
@@ -344,14 +354,16 @@
 
 /* Scratch card: foil over the dates. Interactive only while this scene is shown. */
 .scene-two__scratch {
-  width: min(86cqw, 22rem);
-  min-height: max(3rem, min(12cqh, 5.6rem));
+  width: min(90cqw, 21.5rem);
+  height: clamp(3.2rem, 7dvh, 3.85rem);
+  min-height: clamp(3.2rem, 7dvh, 3.85rem);
   pointer-events: none;
 }
 
 @media (pointer: coarse) {
   .scene-two__scratch {
-    min-height: max(3.25rem, min(14cqh, 6.2rem));
+    height: clamp(3.3rem, 7.5dvh, 4rem);
+    min-height: clamp(3.3rem, 7.5dvh, 4rem);
   }
 }
 
@@ -396,29 +408,41 @@
   outline-offset: 3px;
 }
 
-/* The countdown, highlighted: a dusk-glass panel with the invitation's gold hairline. */
+/* The countdown, highlighted: a dusk-glass panel with matching width to the scratch card. */
 .scene-two__countdown-panel {
-  grid-row: 2;
   position: relative;
-  max-width: calc(100% - 1rem);
-  padding: min(2.6cqh, 1.25rem) min(2.6cqw, 1.4rem);
-  border: 1px solid rgba(230, 211, 163, 0.6);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(34, 30, 58, 0.66), rgba(26, 24, 46, 0.52));
+  width: min(90cqw, 21.5rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: clamp(0.45rem, 1.4dvh, 0.8rem) clamp(0.35rem, 1.8vw, 0.75rem);
+  border: 1px solid rgba(230, 211, 163, 0.55);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(34, 30, 58, 0.68), rgba(26, 24, 46, 0.54));
   box-shadow:
-    inset 0 0 0 4px rgba(26, 24, 46, 0.25),
-    inset 0 0 0 5px rgba(230, 211, 163, 0.22),
-    0 0 46px rgba(230, 211, 163, 0.16),
-    0 18px 40px -18px rgba(10, 8, 20, 0.7);
+    inset 0 0 0 1px rgba(230, 211, 163, 0.18),
+    0 8px 30px rgba(10, 8, 20, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.scene-two__countdown-panel .countdown {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
 }
 
 .scene-two__countdown-panel .countdown__value {
-  font-size: min(12cqw, 7.4cqh);
+  font-size: min(9.2cqw, 5.2cqh, 1.85rem);
   text-shadow: 0 0 18px rgba(230, 211, 163, 0.28), 0 2px 12px rgba(10, 8, 20, 0.6);
 }
 
 .scene-two__countdown-panel .countdown__unit {
-  padding: 0 min(2.6cqw, 1.5rem);
+  padding: 0 clamp(0.2rem, 1.4cqw, 0.55rem);
+}
+
+.scene-two__countdown-panel .countdown__label {
+  font-size: min(2.8cqw, 1.6cqh, 0.65rem);
 }
 
 @media (orientation: landscape) and (max-height: 560px) {
@@ -696,16 +720,6 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  width: min(100vw, calc(100dvh * 9 / 16));
-  height: min(100dvh, calc(100vw * 16 / 9));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: center;
-  z-index: 6;
-  opacity: 0;
-  pointer-events: none;
   will-change: opacity, transform;
   box-sizing: border-box;
   padding-top: max(env(safe-area-inset-top), 2%);
@@ -1243,9 +1257,9 @@
   gap: 0.45rem;
   margin: clamp(0.45rem, 1.3dvh, 0.85rem) auto 0;
   padding: clamp(0.38rem, 1dvh, 0.55rem) clamp(1.1rem, 3.8vw, 1.55rem);
-  border: 1px solid rgba(212, 124, 27, 0.5);
+  border: 1px solid rgba(74, 112, 68, 0.45);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-hero-caps, "Cinzel", Georgia, serif);
@@ -1254,24 +1268,24 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #d47c1b;
-  box-shadow: 0 3px 12px rgba(212, 124, 27, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: #3b5f36;
+  box-shadow: 0 3px 14px rgba(74, 112, 68, 0.16), 0 1px 3px rgba(0, 0, 0, 0.06);
   opacity: 0;
   pointer-events: auto;
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
   will-change: opacity, transform;
 }
 
 .scene-reception__directions:hover {
   transform: scale(1.04);
   background: rgba(255, 255, 255, 0.98);
-  border-color: #d47c1b;
-  color: #a85f0f;
-  box-shadow: 0 4px 16px rgba(212, 124, 27, 0.25);
+  border-color: #3b5f36;
+  color: #274023;
+  box-shadow: 0 4px 18px rgba(74, 112, 68, 0.28);
 }
 
 .scene-reception__directions:active {
@@ -1279,7 +1293,7 @@
 }
 
 .scene-reception__directions:focus-visible {
-  outline: 2px solid #d47c1b;
+  outline: 2px solid #3b5f36;
   outline-offset: 3px;
 }
 
@@ -1287,7 +1301,8 @@
   width: clamp(0.85rem, 2.5vw, 1.05rem);
   height: clamp(0.85rem, 2.5vw, 1.05rem);
   flex-shrink: 0;
-  color: #60865a;
+  color: currentColor;
+  transition: transform 0.25s ease;
 }
 
 @media (orientation: landscape) and (max-height: 600px) {

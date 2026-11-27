@@ -456,7 +456,7 @@ export function useSceneScroll({
             weddingTitle,
             { opacity: 0, y: 16, scale: 0.94 },
             { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power2.out" },
-            4.0,
+            2.0,
           );
         }
         if (weddingDate) {
@@ -513,7 +513,7 @@ export function useSceneScroll({
         );
       } else {
         if (weddingTitle) {
-          weddingReveal.to(weddingTitle, { opacity: 1, duration: 0.4 }, 4.0);
+          weddingReveal.to(weddingTitle, { opacity: 1, duration: 0.4 }, 2.0);
         }
         const g1 = [weddingDate, weddingDivider].filter(Boolean) as HTMLElement[];
         if (g1.length > 0) {
@@ -538,7 +538,7 @@ export function useSceneScroll({
             receptionTitle,
             { opacity: 0, y: 16, scale: 0.94 },
             { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power2.out" },
-            0,
+            3.5,
           );
         }
         if (receptionDate) {
@@ -595,7 +595,7 @@ export function useSceneScroll({
         );
       } else {
         if (receptionTitle) {
-          receptionReveal.to(receptionTitle, { opacity: 1, duration: 0.4 });
+          receptionReveal.to(receptionTitle, { opacity: 1, duration: 0.4 }, 3.5);
         }
         const g1 = [receptionDate, receptionDivider].filter(Boolean) as HTMLElement[];
         if (g1.length > 0) {
@@ -642,6 +642,7 @@ export function useSceneScroll({
       // Event listener for arriving at ceremony 4 (Page 5)
       const unsubCeremonyFour = onArrival("ceremony-four", () => {
         window.dispatchEvent(new Event("resize"));
+        receptionRevealRef.current?.pause(0);
         if (weddingRevealRef.current) {
           weddingRevealRef.current.restart();
         }

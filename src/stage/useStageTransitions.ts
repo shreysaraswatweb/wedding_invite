@@ -78,7 +78,6 @@ export function useStageTransitions({
 
     // DOM layer references
     const cinemaEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="cinema"]');
-    const rsvpEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="rsvp"]');
     const warmRegardsEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="warm-regards"]');
 
     const heroEl = cinemaEl?.querySelector<HTMLElement>(".scene-hero");
@@ -100,8 +99,7 @@ export function useStageTransitions({
       3: cinemaEl,
       4: cinemaEl,
       5: cinemaEl,
-      6: rsvpEl,
-      7: warmRegardsEl,
+      6: warmRegardsEl,
     };
 
     const fromLayer = layerMap[from];
@@ -114,7 +112,7 @@ export function useStageTransitions({
       onComplete: () => {
         isTransitioningRef.current = false;
         // Ensure non-active layers are strictly hidden and inert
-        const allLayers = [cinemaEl, rsvpEl, warmRegardsEl];
+        const allLayers = [cinemaEl, warmRegardsEl];
         allLayers.forEach((layer) => {
           if (!layer) return;
           const isCurrent = layer === toLayer;
@@ -364,10 +362,9 @@ export function useStageTransitions({
 
     // Initialize layers: Step 0 (Hero: Lakshay & Prerna) is active, all others hidden
     const cinemaEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="cinema"]');
-    const rsvpEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="rsvp"]');
     const warmRegardsEl = stageEl.querySelector<HTMLElement>('[data-stage-scene="warm-regards"]');
 
-    const nonCinema = [rsvpEl, warmRegardsEl];
+    const nonCinema = [warmRegardsEl];
     nonCinema.forEach((layer) => {
       if (layer) gsap.set(layer, { autoAlpha: 0, opacity: 0, pointerEvents: "none" });
     });

@@ -1,51 +1,41 @@
 .ganesha-prologue {
   position: absolute;
   inset: 0;
-  z-index: 60;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 1;
-  transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(0px);
+  transform: scale(1);
+  transition:
+    opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   overflow: hidden;
-  will-change: opacity;
+  background: transparent;
+  will-change: opacity, filter, transform;
 }
 
 .ganesha-prologue.is-fading {
   opacity: 0;
+  filter: blur(18px);
+  transform: scale(1.05);
   pointer-events: none;
 }
 
-/* Authentic video 1 first-frame backdrop */
-.ganesha-prologue__backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  background-color: #faf7f2;
-}
-
-.ganesha-prologue__wallpaper {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  filter: contrast(1.14) saturate(1.1) brightness(0.98);
-}
-
-.ganesha-prologue__vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(240, 230, 215, 0.45) 100%
-  );
-  pointer-events: none;
+.ganesha-prologue.is-fading .ganesha-prologue__card {
+  animation: none;
+  filter: blur(14px);
+  opacity: 0;
+  transform: scale(1.04);
+  transition:
+    opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Centered 9:16 card lockup matching the reference layout */

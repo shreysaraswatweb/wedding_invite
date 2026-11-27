@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { useCallback, useRef, useState, type CSSProperties, type RefObject } from "react";
 import { invitation } from "../../config/invitation";
 import { haptic } from "../../utils/haptic";
 import { useSceneScroll } from "../../animations/useSceneScroll";
@@ -6,8 +6,6 @@ import { Countdown } from "../Countdown/Countdown";
 import { OrnamentDivider } from "../OrnamentDivider/OrnamentDivider";
 import { ScratchCard } from "../ScratchCard/ScratchCard";
 import { SeamlessVideoBackground } from "./SeamlessVideoBackground";
-import { GaneshaPrologue } from "./GaneshaPrologue";
-import { holdScroll, releaseScroll } from "../../stage/arrival";
 import countdownVideo from "../../assests/videos/gemini_generated_video_15ad4f22.mp4";
 import video1 from "../../assests/wedding_invite_assests/1.mp4";
 import image2 from "../../assests/wedding_invite_assests/2.jpg";
@@ -62,7 +60,6 @@ export function CinematicSequence({
   const rootRef = useRef<HTMLElement>(null);
   const [videoRendered, setVideoRendered] = useState(false);
   const [videoCompleted, setVideoCompleted] = useState(false);
-  const [ganeshaDone, setGaneshaDone] = useState(false);
   const [, sceneTwo, ...later] = invitation.scenes;
   const { wedding } = invitation;
   const framed = Boolean(sceneTwo.artAspect);
@@ -71,17 +68,6 @@ export function CinematicSequence({
   const headingLink = headingWords.length > 1 && headingWords[0].length <= 3 ? headingWords[0] : "";
   const headingRest = (headingLink ? headingWords.slice(1) : headingWords).join(" ");
   const frameStyle = { "--art-aspect": sceneTwo.artAspect ?? 1 } as CSSProperties;
-
-  useEffect(() => {
-    if (active && !ganeshaDone) {
-      holdScroll();
-    }
-  }, [active, ganeshaDone]);
-
-  const handleGaneshaComplete = useCallback(() => {
-    setGaneshaDone(true);
-    releaseScroll();
-  }, []);
 
   const handleVideoRendered = useCallback(() => {
     setVideoRendered(true);
@@ -111,21 +97,13 @@ export function CinematicSequence({
       inert={!active}
     >
       <div className="cinema__viewport">
-        {/* Divine Ganesha Opening Prologue (Page 1 Entrance) */}
-        {active && !ganeshaDone && (
-          <GaneshaPrologue
-            active={active}
-            onComplete={handleGaneshaComplete}
-            background="/images/scene-1.jpg"
-          />
-        )}
-
-        {/* Page 1 (Lakshay & Prerna - Video 1): Paused during Ganesha, then 19s forward -> Boomerang loop */}
+        {/* Page 1 (Lakshay & Prerna - Video 1): 19s forward -> Reveal logo & text at 15s -> Boomerang loop at 16.92s-19.0s */}
         <div className="scene-bg scene-bg--one">
           <SeamlessVideoBackground
             src={video1}
             active={active}
-            paused={!ganeshaDone}
+            revealTime={15.0}
+            onReveal={handleVideoCompleted}
             boomerangStart={16.92}
             boomerangEnd={19.0}
             onInitialComplete={handleVideoCompleted}
@@ -169,12 +147,14 @@ export function CinematicSequence({
             ambient={true}
           />
         </div>
-        {/* Page 6 (Video 5): 5.mp4 background with ambient blurred fill */}
+        {/* Page 6 (Video 5): 5.mp4 background with ambient blurred fill, start on arrival at 0s, boomerang last 3s */}
         <div className="scene-bg scene-bg--five">
           <SeamlessVideoBackground
             src={video5}
             active={active}
-            crossfadeDuration={1.4}
+            startOnArrival="ceremony-five"
+            boomerangStart={7.33}
+            boomerangEnd={10.33}
             ambient={true}
           />
         </div>

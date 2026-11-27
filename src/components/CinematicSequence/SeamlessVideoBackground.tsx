@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./SeamlessVideoBackground.css";
 import { onArrival } from "../../stage/arrival";
 import { STAGE_STEPS } from "../../stage/stageSteps";
@@ -13,6 +13,10 @@ type SeamlessVideoBackgroundProps = {
   boomerangStart?: number;
   /** End timestamp in seconds for boomerang loop (e.g. 19.0) */
   boomerangEnd?: number;
+  /** Timestamp in seconds during forward playback to trigger onReveal (e.g. 15.0) */
+  revealTime?: number;
+  /** Callback fired when forward playback reaches revealTime */
+  onReveal?: () => void;
   /** Callback fired the first time the full video completes its full duration */
   onInitialComplete?: () => void;
   /** When true, renders a zoomed, heavily blurred ambient motion background to fill any letterbox/pillarbox space */
@@ -21,6 +25,8 @@ type SeamlessVideoBackgroundProps = {
   startOnArrival?: string;
   /** When true, explicitly holds video playback paused at 0s */
   paused?: boolean;
+  /** Optional poster image to display while video is loading or paused */
+  poster?: string;
 };
 
 /**
@@ -38,21 +44,27 @@ export function SeamlessVideoBackground({
   onVideoRendered,
   boomerangStart,
   boomerangEnd,
+  revealTime,
+  onReveal,
   onInitialComplete,
   ambient = false,
   startOnArrival,
   paused = false,
+  poster,
 }: SeamlessVideoBackgroundProps) {
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ambientRef = useRef<HTMLVideoElement>(null);
+  const [hasRendered, setHasRendered] = useState(false);
 
   const onRenderedRef = useRef(onVideoRendered);
   const onInitialCompleteRef = useRef(onInitialComplete);
+  const onRevealRef = useRef(onReveal);
   useEffect(() => {
     onRenderedRef.current = onVideoRendered;
     onInitialCompleteRef.current = onInitialComplete;
+    onRevealRef.current = onReveal;
   });
 
   const isBoomerang = boomerangStart !== undefined && boomerangEnd !== undefined;
@@ -69,6 +81,7 @@ export function SeamlessVideoBackground({
 
     let animId = 0;
     let hasCompletedFirstRun = false;
+    let hasTriggeredReveal = false;
     let isBoomerangRunning = false;
     const frames: ImageBitmap[] = [];
     let frameSeq = 0;
@@ -76,6 +89,13 @@ export function SeamlessVideoBackground({
 
     const bStart = boomerangStart ?? 16.92;
     const bEnd = boomerangEnd ?? 19;
+
+    const checkRevealTrigger = (currentTime: number) => {
+      if (revealTime != null && !hasTriggeredReveal && currentTime >= revealTime) {
+        hasTriggeredReveal = true;
+        onRevealRef.current?.();
+      }
+    };
 
     vid.muted = true;
     vid.defaultMuted = true;
@@ -88,6 +108,7 @@ export function SeamlessVideoBackground({
     const notifyRendered = () => {
       if (!renderedNotified) {
         renderedNotified = true;
+        setHasRendered(true);
         onRenderedRef.current?.();
       }
     };
@@ -169,6 +190,12 @@ export function SeamlessVideoBackground({
       if (hasCompletedFirstRun) return;
       hasCompletedFirstRun = true;
 
+      // Ensure reveal is triggered if not yet fired
+      if (revealTime != null && !hasTriggeredReveal) {
+        hasTriggeredReveal = true;
+        onRevealRef.current?.();
+      }
+
       // Pause the forward video
       vid.pause();
 
@@ -187,6 +214,7 @@ export function SeamlessVideoBackground({
       if (hasCompletedFirstRun) return;
 
       const t = vid.currentTime;
+      checkRevealTrigger(t);
 
       if (t >= bStart && t <= bEnd) {
         const now = performance.now();
@@ -219,6 +247,7 @@ export function SeamlessVideoBackground({
     const startForwardPlayback = () => {
       cancelAnimationFrame(animId);
       hasCompletedFirstRun = false;
+      hasTriggeredReveal = false;
       isBoomerangRunning = false;
       frames.filter(Boolean).forEach((bmp) => {
         try {
@@ -232,10 +261,14 @@ export function SeamlessVideoBackground({
       canvas.style.display = "none";
       vid.style.opacity = "1";
 
-      vid.currentTime = 0;
+      if (vid.currentTime !== 0) {
+        vid.currentTime = 0;
+      }
       vid.play().then(() => notifyRendered()).catch(() => {});
       if (ambientRef.current) {
-        ambientRef.current.currentTime = 0;
+        if (ambientRef.current.currentTime !== 0) {
+          ambientRef.current.currentTime = 0;
+        }
         ambientRef.current.play().catch(() => {});
       }
 
@@ -250,8 +283,14 @@ export function SeamlessVideoBackground({
     const pausePlayback = () => {
       cancelAnimationFrame(animId);
       vid.pause();
+      if (vid.currentTime !== 0) {
+        vid.currentTime = 0;
+      }
       if (ambientRef.current) {
         ambientRef.current.pause();
+        if (ambientRef.current.currentTime !== 0) {
+          ambientRef.current.currentTime = 0;
+        }
       }
       isBoomerangRunning = false;
       canvas.style.display = "none";
@@ -289,6 +328,7 @@ export function SeamlessVideoBackground({
 
     const onTimeUpdate = () => {
       if (hasCompletedFirstRun) return;
+      checkRevealTrigger(vid.currentTime);
       if (vid.currentTime >= bEnd) {
         handleFirstRunComplete();
       }
@@ -321,7 +361,7 @@ export function SeamlessVideoBackground({
       unsubArrival?.();
       unsubOthers.forEach((u) => u());
     };
-  }, [active, isBoomerang, boomerangStart, boomerangEnd, startOnArrival, paused]);
+  }, [active, isBoomerang, boomerangStart, boomerangEnd, startOnArrival, paused, revealTime]);
 
   // -------------------------------------------------------------
   // STANDARD PLAYBACK MODE (Single Player or Dual A/B Crossfade)
@@ -339,6 +379,7 @@ export function SeamlessVideoBackground({
     const notifyRendered = () => {
       if (!renderedNotified) {
         renderedNotified = true;
+        setHasRendered(true);
         onRenderedRef.current?.();
       }
     };
@@ -528,6 +569,16 @@ export function SeamlessVideoBackground({
       className={`seamless-video ${ambient ? "seamless-video--has-ambient seamless-video--ambient-white" : ""} ${className}`.trim()}
       aria-hidden="true"
     >
+      {poster && (
+        <img
+          src={poster}
+          alt=""
+          aria-hidden="true"
+          className={`seamless-video__poster ${hasRendered ? "is-hidden" : ""}`}
+          loading="eager"
+          decoding="sync"
+        />
+      )}
       {ambient && (
         <>
           <video
@@ -549,6 +600,7 @@ export function SeamlessVideoBackground({
       <video
         ref={videoARef}
         src={src}
+        poster={poster}
         muted
         loop={!isDual && !isBoomerang}
         playsInline

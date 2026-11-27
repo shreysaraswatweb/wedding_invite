@@ -3,42 +3,63 @@ import "./GaneshaPrologue.css";
 
 type GaneshaPrologueProps = {
   active: boolean;
-  onComplete: () => void;
-  background?: string;
+  videoRendered?: boolean;
+  onComplete?: () => void;
 };
 
 export function GaneshaPrologue({
   active,
+  videoRendered = false,
   onComplete,
-  background = "/images/scene-1.jpg",
 }: GaneshaPrologueProps) {
   const [fading, setFading] = useState(false);
+  const [removed, setRemoved] = useState(false);
 
   useEffect(() => {
     if (!active) return;
 
-    // Display for 3.4 seconds, then smoothly fade out
-    const fadeTimer = window.setTimeout(() => {
-      setFading(true);
-    }, 3400);
+    let fadeTimer: number;
+    let removeTimer: number;
 
-    const completeTimer = window.setTimeout(() => {
-      onComplete();
-    }, 4000);
+    const startTimer = () => {
+      // Hold video paused on frame 0 for 2 seconds, then trigger fade-blur out and unpause video
+      fadeTimer = window.setTimeout(() => {
+        setFading(true);
+        onComplete?.();
+      }, 2000);
+
+      removeTimer = window.setTimeout(() => {
+        setRemoved(true);
+      }, 2800);
+    };
+
+    if (videoRendered) {
+      startTimer();
+    } else {
+      const fallback = window.setTimeout(startTimer, 250);
+      return () => {
+        clearTimeout(fallback);
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimer);
+      };
+    }
 
     return () => {
       clearTimeout(fadeTimer);
-      clearTimeout(completeTimer);
+      clearTimeout(removeTimer);
     };
-  }, [active, onComplete]);
+  }, [active, videoRendered, onComplete]);
 
   const handleDismiss = () => {
     if (fading) return;
     setFading(true);
+    onComplete?.();
     window.setTimeout(() => {
-      onComplete();
-    }, 400);
+      setRemoved(true);
+    }, 800);
   };
+
+  if (!active || removed) return null;
 
   return (
     <div
@@ -47,16 +68,6 @@ export function GaneshaPrologue({
       role="banner"
       aria-label="Shree Ganeshaya Namah Blessing"
     >
-      <div className="ganesha-prologue__backdrop" aria-hidden="true">
-        <img
-          src={background}
-          alt=""
-          className="ganesha-prologue__wallpaper"
-          loading="eager"
-        />
-        <div className="ganesha-prologue__vignette" />
-      </div>
-
       <div className="ganesha-prologue__card">
         {/* Top: Shree Ganeshaya Namah with authentic two-tone saffron & vermillion styling */}
         <h2 className="ganesha-prologue__heading">

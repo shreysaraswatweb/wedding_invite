@@ -10,21 +10,23 @@
  */
 
 .programme {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
   width: 100%;
+  height: 100%;
   max-width: 100%;
   min-width: 0;
 }
 
 .programme__viewport {
-  position: relative;
+  position: absolute;
+  inset: 0;
   isolation: isolate;
   width: 100%;
   height: 100%;
-  height: 100dvh;
   overflow: hidden;
-  background: #141013;
+  background: #181c20;
 }
 
 /* ---- Artwork layers ------------------------------------------------- */

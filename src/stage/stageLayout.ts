@@ -26,7 +26,6 @@ export function buildStageLayout(dayIds: string[]): StageLayout {
   const holds = [
     { id: "cinema", length: scrollDistanceVh },
     ...dayIds.map((id) => ({ id: `day-${id}`, length: programmeScrollVh })),
-    { id: "rsvp", length: rsvpHoldVh },
     { id: "warm-regards", length: rsvpHoldVh },
   ];
 

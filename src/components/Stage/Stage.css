@@ -5,27 +5,27 @@
   height: 100%;
   height: 100dvh;
   overflow: hidden;
-  background: #141013;
+  background: #181c20;
 }
 
-/* The fixed picture frame with 2px vertical bleed to eliminate subpixel white seams. */
+/* The fixed picture frame with vertical bleed to eliminate subpixel gaps and white seams. */
 .stage__viewport {
   position: absolute;
-  inset: -2px 0;
+  inset: -4px 0;
   width: 100%;
-  height: calc(100% + 4px);
+  height: calc(100% + 8px);
   overflow: hidden;
-  background: #141013;
+  background: #181c20;
   touch-action: none;
   contain: layout paint;
 }
 
-/* Every scene is a full-frame layer, stacked in story order. */
+/* Every scene is a full-frame layer, stacked in story order, filling the bleed viewport. */
 .stage__viewport > .stage__layer {
   position: absolute;
-  inset: -2px 0;
+  inset: 0;
   width: 100%;
-  height: calc(100% + 4px);
+  height: 100%;
   pointer-events: none;
   will-change: opacity, transform;
   transform: translate3d(0, 0, 0);
@@ -104,7 +104,7 @@
   }
 }
 
-/* Quiet gilded cue on every page: subtle gold typography with breathing chevron */
+/* Quiet gilded cue on pages: subtle gold typography with breathing chevron */
 .scroll-cue {
   position: absolute;
   left: 0;

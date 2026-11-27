@@ -5,7 +5,6 @@ export type StageStepId =
   | "celebrations"
   | "ceremony-four"
   | "ceremony-five"
-  | "rsvp"
   | "warm-regards";
 
 export type StageStep = {
@@ -21,7 +20,6 @@ export const STAGE_STEPS: StageStep[] = [
   { id: "celebrations", sceneId: "cinema", label: "Haldi Ceremony" },
   { id: "ceremony-four", sceneId: "cinema", label: "Wedding Ceremony" },
   { id: "ceremony-five", sceneId: "cinema", label: "Reception" },
-  { id: "rsvp", sceneId: "rsvp", label: "RSVP" },
   { id: "warm-regards", sceneId: "warm-regards", label: "Warm Regards" },
 ];
 

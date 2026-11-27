@@ -3,7 +3,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CinematicSequence } from "./components/CinematicSequence/CinematicSequence";
 import { Stage } from "./components/Stage/Stage";
 import { Programmes } from "./components/Programmes/Programmes";
-import { Rsvp } from "./components/Rsvp/Rsvp";
 import { WarmRegards } from "./components/WarmRegards/WarmRegards";
 import { invitation } from "./config/invitation";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
@@ -203,7 +202,7 @@ export default function App() {
     document.body.style.overflow = "hidden";
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", "#141013");
+      ?.setAttribute("content", "#181c20");
   }, []);
 
   return (
@@ -248,7 +247,6 @@ export default function App() {
           stage={stageRef}
         />
         <Programmes active={true} reducedMotion={reducedMotion} stage={stageRef} />
-        <Rsvp active={true} reducedMotion={reducedMotion} stage={stageRef} />
         <WarmRegards active={true} reducedMotion={reducedMotion} stage={stageRef} />
       </Stage>
     </main>
